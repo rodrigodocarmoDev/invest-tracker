@@ -1,0 +1,18 @@
+{
+	"nodes":[
+		{"id":"swagger","type":"text","text":"**5. Documentação OpenAPI / Swagger**\nGeração automática de painel visual (SmallRye OpenAPI).\n- `@Tag`: Agrupa endpoints e organiza o menu.\n- `@Operation`: Descreve o que a rota faz de fato.\n- `@APIResponse`, `@Schema`: Documenta códigos de erro/sucesso esperados e molda como o JSON final aparece no painel interativo.","x":-295,"y":460,"width":590,"height":200,"color":"6"},
+		{"id":"validation","type":"text","text":"**4. Validação de Entrada (Bean Validation)**\nGarante a consistência dos dados (DTOs) antes que atinjam o banco.\n- `@NotNull`, `@NotBlank`: Restringe dados nulos, vazios ou espaços em branco.\n- `@Size`, `@Email`, `@Min`, `@Max`: Regras rigorosas de formatação e limites.\n- `@Valid`: Aciona o motor de verificação nos objetos compostos e listas.","x":295,"y":100,"width":400,"height":280,"color":"3"},
+		{"id":"cdi","type":"text","text":"**3. Serviços & CDI (Injeção de Dependências)**\nOrquestração de regras de negócio gerenciadas pelo Quarkus (Arc).\n- `@ApplicationScoped`: Define a classe como Bean (Singleton).\n- `@Inject`: Injeta automaticamente classes e dependências prontas para uso.\n- `@Transactional`: Garante que o método rode protegido por transação de banco (Commit/Rollback).","x":-720,"y":80,"width":400,"height":300,"color":"4"},
+		{"id":"jpa","type":"text","text":"**1. JPA & Persistência (Hibernate)**\nMapeamento de Banco de Dados (`Entity`).\n- `@Entity`, `@Table`: Define a classe como uma tabela.\n- `@Id`, `@GeneratedValue`: Define e gera a chave primária.\n- `@Column`, `@Enumerated`: Mapeia atributos para colunas específicas e converte Enums.","x":-720,"y":-220,"width":400,"height":240,"color":"2"},
+		{"id":"rest","type":"text","text":"**2. Exposição REST (JAX-RS / RESTEasy)**\nTransforma métodos Java em Endpoints HTTP (`Resource/Controller`).\n- `@Path`: Define a rota/URI base.\n- `@GET`, `@POST`, `@PUT`, `@DELETE`: Verbos de comunicação HTTP.\n- `@Produces`, `@Consumes`: Formato de entrada e saída (JSON).\n- `@RestPath`, `@RestQuery`: Extração de parâmetros injetados na URL.","x":295,"y":-250,"width":400,"height":300,"color":"5"},
+		{"id":"header","type":"text","text":"# Aula 3: Anotações e Tags do Quarkus, Java e Swagger\nGuia definitivo de mapeamento de banco, exposição REST, injeção de dependências, validação e documentação de APIs.","x":-400,"y":-520,"width":800,"height":120,"color":"1"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"header","fromSide":"bottom","toNode":"jpa","toSide":"top"},
+		{"id":"e2","fromNode":"header","fromSide":"bottom","toNode":"rest","toSide":"top"},
+		{"id":"e3","fromNode":"jpa","fromSide":"bottom","toNode":"cdi","toSide":"top"},
+		{"id":"e4","fromNode":"rest","fromSide":"bottom","toNode":"validation","toSide":"top"},
+		{"id":"e5","fromNode":"cdi","fromSide":"bottom","toNode":"swagger","toSide":"left"},
+		{"id":"e6","fromNode":"validation","fromSide":"bottom","toNode":"swagger","toSide":"right"}
+	]
+}

@@ -1,5 +1,6 @@
 package resource;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -12,31 +13,67 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 public class DailyQuoteResource {
 
+    @Inject
+    DailyQuoteService dailyQuoteService;
+
     @GET
+    @Path("/")
     public Response findAll() {
-        return Response.ok().build();
+        try {
+            List<DailyQuotesDTO> quotes = dailyQuoteService.getAllQuotes();
+            if (quotes.isEmpty()) {
+                return Response.noContent().build();
+            }
+            return Response.ok(quotes).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving daily quotes").build();
+        }
     }
 
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
-        return Response.ok().build();
+        try {
+           DailyQuotesDTO dailyQuoteDTO = dailyQuoteService.getById(id);
+           return Response.ok(dailyQuoteDTO).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving daily quotes").build();
+        }
     }
 
     @POST
-    public Response create(DailyQuotes quote) {
-        return Response.status(Response.Status.CREATED).entity(quote).build();
+    @Path("/")
+    public Response create(DailyQuotesForm quoteForm) {
+        try {
+           DailyQuoteDTO dailyQuoteDTO = dailyQuoteService.create(quoteForm);
+           return Response.status(Response.Status.CREATED).entity(dailyQuoteDTO).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating daily quotes").build();
+        }
+
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, DailyQuotes quote) {
-        return Response.ok(quote).build();
+    public Response update(@PathParam("id") UUID id, DailyQuotesForm quoteForm) {
+        try {
+            DailyQuoteDTO dailyQuoteDTO = dailyQuoteService.update(id, quoteForm);
+            return Response.ok(quoteForm).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating daily quotes").build();
+        }
+
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
-        return Response.noContent().build();
+        try {
+            dailyQuoteService.delete(id);
+            return Response.noContent().build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting daily quotes").build();
+        }
+
     }
 }

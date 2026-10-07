@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"header","type":"text","text":"# Aula 5: Módulos Estruturais e de Suporte\nComo organizar Configurações, Clientes HTTP, Constantes, Exceções e Utilitários em uma arquitetura limpa com Quarkus.","x":0,"y":-400,"width":800,"height":100,"color":"1"},
+		{"id":"config","type":"text","text":"**1. Módulo `config` (Type-Safe Properties)**\nSubstitui o uso solto de propriedades textuais por interfaces tipadas injetáveis.\n- `@ConfigMapping`: Agrupa propriedades do `application.properties`.\n- `@WithDefault`: Define valor padrão em caso de omissão.\n- Conversão automática para objetos como `Duration` e `URL`.","x":-450,"y":-200,"width":400,"height":160,"color":"6"},
+		{"id":"client","type":"text","text":"**2. Módulo `client` (MicroProfile Rest Client)**\nIsola chamadas HTTP para APIs externas (ex: ViaCep, Pagamentos).\n- `@RegisterRestClient`: Cria proxy cliente HTTP dinâmico sem boilerplate.\n- Usa anotações padrão JAX-RS (`@Path`, `@GET`).\n- Injetado de volta nos serviços através da anotação `@RestClient`.","x":50,"y":-200,"width":400,"height":160,"color":"2"},
+		{"id":"constant","type":"text","text":"**3. Módulo `constant`**\nCentraliza valores fixos (*Magic Strings*) e Enums do domínio.\n- Classes utilitárias com atributos `public static final`.\n- Impede instanciação usando construtor privado.\n- Facilita manutenção e evita erros de digitação (ex: Keys, Headers).","x":-450,"y":0,"width":400,"height":160,"color":"3"},
+		{"id":"exception","type":"text","text":"**4. Módulo `exception` (Global Handler)**\nCaptura e trata erros, evitando stacktraces gigantes expostos ao cliente.\n- **Exceções Customizadas:** Representam quebras explícitas de regras de negócio.\n- **`ExceptionMapper<T>` e `@Provider`:** Intercepta a falha antes de devolver ao usuário, gerando uma resposta HTTP controlada (ex: JSON amigável com status 400).","x":50,"y":0,"width":400,"height":160,"color":"1"},
+		{"id":"utils","type":"text","text":"**5. Módulo `utils`**\nAgrupa funções puras (ex: validação de CPF, aplicação de máscaras, limpezas numéricas).\n- Métodos puramente estáticos (`public static`).\n- **Stateless:** Totalmente sem estado interno.\n- Instanciação bloqueada (`private utils() {}`).","x":-200,"y":200,"width":400,"height":160,"color":"5"},
+		{"id":"holistica","type":"text","text":"**Visão Holística (Orquestração)**\n- O **Client** acessa a API remota utilizando dados injetados pelo **Config**.\n- O **Utils** limpa e sanitiza as requisições.\n- Se houver falha, as mensagens vêm padronizadas do **Constant** e o erro é capturado e envelopado pelo **Exception**.","x":250,"y":200,"width":400,"height":160,"color":"4"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"header","fromSide":"bottom","toNode":"config","toSide":"top"},
+		{"id":"e2","fromNode":"header","fromSide":"bottom","toNode":"client","toSide":"top"},
+		{"id":"e3","fromNode":"config","fromSide":"bottom","toNode":"constant","toSide":"top"},
+		{"id":"e4","fromNode":"client","fromSide":"bottom","toNode":"exception","toSide":"top"},
+		{"id":"e5","fromNode":"constant","fromSide":"bottom","toNode":"utils","toSide":"top"},
+		{"id":"e6","fromNode":"exception","fromSide":"bottom","toNode":"holistica","toSide":"top"}
+	]
+}

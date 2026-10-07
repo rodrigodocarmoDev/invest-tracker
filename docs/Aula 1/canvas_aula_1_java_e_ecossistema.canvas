@@ -1,0 +1,32 @@
+{
+	"nodes":[
+		{"id":"root","type":"text","text":"# Aula 1: Fundamentos de Java, POO & Ecossistema Enterprise\n*Guia Prático e Estrutura Integrada*","x":600,"y":-240,"width":500,"height":140,"color":"1"},
+		{"id":"tipos_header","type":"text","text":"## 1. Sistema de Tipos & Memória\nComo o Java armazena e manipula dados na memória Stack e Heap.","x":-200,"y":0,"width":450,"height":110,"color":"2"},
+		{"id":"primitivos","type":"text","text":"### Tipos Primitivos\n- **Armazenamento:** Direto na **Stack** por valor.\n- **Tipos:** `int`, `long`, `boolean`, `double`, `float`, `char`.\n- **Característica:** Alto desempenho, valor default numérico (0 ou false).\n- **Regra do Backend:** NÃO aceitam `null`! Evitar em colunas do banco de dados que podem ser nulas.","x":-450,"y":160,"width":420,"height":280},
+		{"id":"wrappers","type":"text","text":"### Tipos Montados / Wrappers\n- **Armazenamento:** Objeto na **Heap**, referência de ponteiro na Stack.\n- **Classes:** `Integer`, `Long`, `Boolean`, `String`, `BigDecimal`.\n- **Vantagem:** Permite estado `null` (fundamental para entidades JPA/banco de dados).\n- **Atenção:** Comparar com `.equals()`, nunca com `==`!","x":30,"y":160,"width":420,"height":280},
+		{"id":"poo_header","type":"text","text":"## 2. Orientação a Objetos na Prática\nEstruturação de classes, métodos e modficadores.","x":600,"y":0,"width":500,"height":110,"color":"4"},
+		{"id":"classe_instancia","type":"text","text":"### Molde (Classe) vs Objeto (Instância)\n- **Classe:** O projeto estrutural (`public class ContaBancaria`).\n- **Instanciação:** Instanciar com `new` aloca o objeto isolado na Heap.\n- **Construtor:** Método executado durante o `new` para inicializar atributos.","x":520,"y":160,"width":320,"height":280},
+		{"id":"assinatura_metodo","type":"text","text":"### Anatomia de um Método\n`public final BigDecimal depositar(BigDecimal valor)`\n\n1. **Modificador:** `public` (Visibilidade total)\n2. **Retorno:** `BigDecimal` (O que devolve)\n3. **Nome:** `depositar` (Verbo em camelCase)\n4. **Parâmetros:** `(BigDecimal valor)` (Entradas)","x":860,"y":160,"width":320,"height":344},
+		{"id":"eco_header","type":"text","text":"## 3. Ecossistema Enterprise & Build\nFerramentas de infraestrutura do desenvolvimento profissional.","x":1350,"y":0,"width":500,"height":110,"color":"5"},
+		{"id":"maven","type":"text","text":"### Apache Maven (`pom.xml`)\nGerenciador de compilação e dependências.\n\n- `mvn clean`: Apaga a pasta `/target`.\n- `mvn compile`: Gera bytecodes `.class`.\n- `mvn test`: Roda testes unitários.\n- `mvn package`: Empacota a aplicação em `.jar`.","x":1250,"y":160,"width":330,"height":320},
+		{"id":"frameworks","type":"text","text":"### Frameworks Backend\n- **Spring Boot:** Padrão de mercado, Injeção de Dependência (IoC), resolução em Runtime via Reflection.\n- **Quarkus:** Voltado para Nuvem/Kubernetes, otimizações executadas em tempo de compilação (Build-Time), inicialização ultra-rápida.","x":1600,"y":160,"width":350,"height":250},
+		{"id":"static_concept","type":"text","text":"### O Modificador `static`\n- Pertence à **Classe** e não ao objeto instanciado.\n- **Utilização:** Métodos utilitários puros (`ValidadorUtil.isCpfValido()`) e constantes globais.\n- 🛑 **Evitar:** Em variáveis mutáveis de servidores web (gera Race Conditions).","x":860,"y":550,"width":320,"height":310},
+		{"id":"encapsulamento","type":"text","text":"### Modificadores de Acesso\n- **`private`:** Atributos protegidos contra alteração direta ilegítima.\n- **`public`:** Métodos/Portas de entrada controladas e com validações.","x":520,"y":480,"width":320,"height":210},
+		{"id":"bigdecimal_note","type":"text","text":"⚠️️ **Regra de Ouro (Finanças):**\nNunca use `double` ou `float` para dinheiro devido à imprecisão binária IEEE 754. Use **`BigDecimal`** instanciado com String:\n`new BigDecimal(\"150.75\");`","x":-210,"y":515,"width":450,"height":140,"color":"3"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"root","fromSide":"left","toNode":"tipos_header","toSide":"top"},
+		{"id":"e2","fromNode":"root","fromSide":"bottom","toNode":"poo_header","toSide":"top"},
+		{"id":"e3","fromNode":"root","fromSide":"right","toNode":"eco_header","toSide":"top"},
+		{"id":"e4","fromNode":"tipos_header","fromSide":"bottom","toNode":"primitivos","toSide":"top"},
+		{"id":"e5","fromNode":"tipos_header","fromSide":"bottom","toNode":"wrappers","toSide":"top"},
+		{"id":"e6","fromNode":"primitivos","fromSide":"bottom","toNode":"bigdecimal_note","toSide":"left"},
+		{"id":"e7","fromNode":"wrappers","fromSide":"bottom","toNode":"bigdecimal_note","toSide":"right"},
+		{"id":"e8","fromNode":"poo_header","fromSide":"bottom","toNode":"classe_instancia","toSide":"top"},
+		{"id":"e9","fromNode":"poo_header","fromSide":"bottom","toNode":"assinatura_metodo","toSide":"top"},
+		{"id":"e10","fromNode":"classe_instancia","fromSide":"bottom","toNode":"encapsulamento","toSide":"top"},
+		{"id":"e11","fromNode":"assinatura_metodo","fromSide":"bottom","toNode":"static_concept","toSide":"top"},
+		{"id":"e12","fromNode":"eco_header","fromSide":"bottom","toNode":"maven","toSide":"top"},
+		{"id":"e13","fromNode":"eco_header","fromSide":"bottom","toNode":"frameworks","toSide":"top"}
+	]
+}

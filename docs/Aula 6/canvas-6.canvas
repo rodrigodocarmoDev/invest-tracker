@@ -1,0 +1,108 @@
+{
+  "nodes": [
+    {
+      "id": "header",
+      "type": "text",
+      "text": "# Aula 6: Subindo a Aplicação (Deploy e Nuvem)\nContainers, Pods, Portas de Rede, Variáveis de Ambiente e a Jornada CI/CD do código até a Produção.",
+      "x": 0,
+      "y": -400,
+      "width": 800,
+      "height": 100,
+      "color": "1"
+    },
+    {
+      "id": "docker",
+      "type": "text",
+      "text": "**1. Docker (Imagem vs Container)**\n- **Imagem:** A \"fôrma\" estática e imutável contendo o Java e seu `.jar` compilado.\n- **Container:** A execução isolada e viva dessa imagem na memória.\n- **Dockerfile:** O script manual de instruções de como empacotar tudo.",
+      "x": -450,
+      "y": -200,
+      "width": 400,
+      "height": 160,
+      "color": "2"
+    },
+    {
+      "id": "k8s",
+      "type": "text",
+      "text": "**2. Kubernetes (k8s) e Pods**\nOrquestrador essencial para manter milhares de containers vivos.\n- **Pod:** A menor unidade do Kubernetes (a \"vagem\" que envolve a \"ervilha\" do container).\n- Traz resiliência: se o Pod travar, o k8s cria um novo em segundos noutra máquina.",
+      "x": 50,
+      "y": -200,
+      "width": 400,
+      "height": 160,
+      "color": "5"
+    },
+    {
+      "id": "redes",
+      "type": "text",
+      "text": "**3. Redes e Portas TCP**\n- **IP:** Endereça a máquina. **Porta:** Endereça o processo interno (ex: 8080 pro Quarkus).\n- `127.0.0.1` (Localhost): Bloqueado apenas para uso interno na mesma máquina.\n- `0.0.0.0` (Bind Global): Necessário para containers aceitarem tráfego externo.",
+      "x": -450,
+      "y": 0,
+      "width": 400,
+      "height": 160,
+      "color": "4"
+    },
+    {
+      "id": "env",
+      "type": "text",
+      "text": "**4. Variáveis de Ambiente (ENV)**\nO código base nunca muda entre os ambientes (DEV, HOM e PRD).\n- O que difere são as variáveis injetadas de fora para dentro (ex: `${DB_URL}`).\n- ⚠️ **Regra de Segurança:** NUNCA "chumbe" senhas e credenciais de banco no código. O DevOps/Cloud gerencia isso.",
+      "x": 50,
+      "y": 0,
+      "width": 400,
+      "height": 160,
+      "color": "3"
+    },
+    {
+      "id": "cloud",
+      "type": "text",
+      "text": "**5. Nuvem (Cloud) e o Pipeline CI/CD**\n- **A Nuvem:** Servidores gigantes gerenciados e elásticos sob demanda.\n- **Jornada CI/CD:**\n  1. Push do código (Git).\n  2. Build automatizado e Testes Unitários (CI).\n  3. Construção da Imagem Docker e Publicação (CD).\n  4. Troca fluída (Rollout) no cluster Kubernetes sem derrubar o sistema.",
+      "x": -200,
+      "y": 200,
+      "width": 600,
+      "height": 160,
+      "color": "6"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "fromNode": "header",
+      "fromSide": "bottom",
+      "toNode": "docker",
+      "toSide": "top"
+    },
+    {
+      "id": "e2",
+      "fromNode": "header",
+      "fromSide": "bottom",
+      "toNode": "k8s",
+      "toSide": "top"
+    },
+    {
+      "id": "e3",
+      "fromNode": "docker",
+      "fromSide": "bottom",
+      "toNode": "redes",
+      "toSide": "top"
+    },
+    {
+      "id": "e4",
+      "fromNode": "k8s",
+      "fromSide": "bottom",
+      "toNode": "env",
+      "toSide": "top"
+    },
+    {
+      "id": "e5",
+      "fromNode": "redes",
+      "fromSide": "bottom",
+      "toNode": "cloud",
+      "toSide": "left"
+    },
+    {
+      "id": "e6",
+      "fromNode": "env",
+      "fromSide": "bottom",
+      "toNode": "cloud",
+      "toSide": "right"
+    }
+  ]
+}

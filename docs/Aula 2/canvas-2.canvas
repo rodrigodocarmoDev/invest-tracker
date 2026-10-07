@@ -1,0 +1,35 @@
+{
+	"nodes":[
+		{"id":"ea4e678e9d4d1c79","type":"text","text":"Arquivos de configuração","x":-627,"y":328,"width":1193,"height":172},
+		{"id":"d710c6511dd731c1","type":"text","text":"Config","x":-430,"y":389,"width":107,"height":50,"color":"6"},
+		{"id":"3c4c6a4b467d11c3","type":"text","text":"Client","x":-277,"y":389,"width":107,"height":50,"color":"2"},
+		{"id":"56feac36ba246ce2","type":"text","text":"Constant","x":-121,"y":389,"width":131,"height":50,"color":"3"},
+		{"id":"6d65382a02040e3d","type":"text","text":"Util","x":227,"y":389,"width":107,"height":50,"color":"5"},
+		{"id":"cff5890818feb2b9","type":"text","text":"Exception","x":44,"y":386,"width":131,"height":56,"color":"1"},
+		{"id":"084f94422c046f1c","type":"text","text":"**Entity / Model:** Representa os objetos de domínio e entidades JPA mapeadas diretamente para as tabelas do banco de dados (incluindo enums correlacionados).","x":720,"y":-75,"width":600,"height":100,"color":"1"},
+		{"id":"db75140d9c2aeba0","type":"text","text":"**Resource / Controller:** Porta de entrada REST da API. Define as rotas HTTP, recebe requisições, chama a camada de serviço e retorna respostas aos clientes.","x":720,"y":60,"width":600,"height":95,"color":"5"},
+		{"id":"76a18b20e8663f5e","type":"text","text":"**Service:** Contém as regras de negócio, validações do sistema e orquestração dos fluxos de dados entre a API e a camada de acesso a dados.","x":720,"y":190,"width":600,"height":86,"color":"4"},
+		{"id":"6d1a401224557cbe","type":"text","text":"**Repository:** Interface responsável pela comunicação direta com o banco de dados, executando operações CRUD e consultas personalizadas.","x":720,"y":308,"width":600,"height":86,"color":"3"},
+		{"id":"d2e1f7504dfaeeb4","type":"text","text":"**Mapper:** Realiza a conversão e mapeamento automático entre objetos das camadas, principalmente transformando entidades em DTOs e vice-versa.","x":720,"y":429,"width":600,"height":100,"color":"6"},
+		{"id":"313e885ffdcf01b1","type":"text","text":"**DTO e Form:** Contém as estruturas de dados para entrada e saída na API. Os Forms recebem os dados do cliente e os DTOs retornam as respostas.","x":720,"y":559,"width":600,"height":90,"color":"2"},
+		{"id":"0347910696a694d4","type":"text","text":"**Config:** Agrupa as configurações gerais da aplicação, definindo beans do framework, políticas de segurança, autenticação com Keycloak e parâmetros de banco.","x":1440,"y":-5,"width":605,"height":94,"color":"6"},
+		{"id":"c9f19c54750056f2","type":"text","text":"**Client:** Responsável pelas integrações e chamadas HTTP externas para APIs e serviços de terceiros, como a API Admin do Keycloak.","x":1440,"y":115,"width":602,"height":80,"color":"2"},
+		{"id":"19b99692197f374b","type":"text","text":"**Constant:** Centraliza valores fixos e reutilizáveis, como mensagens de erro, códigos do sistema e chaves estáticas para evitar textos duplicados no código.","x":1440,"y":235,"width":600,"height":97,"color":"3"},
+		{"id":"cd268bad92975d84","type":"text","text":"**Exception:** Define as exceções personalizadas da aplicação e o manipulador global para tratar erros e retornar respostas HTTP padronizadas.","x":1440,"y":375,"width":600,"height":80,"color":"1"},
+		{"id":"e5e532166fd9de06","type":"text","text":"**Util:** Reúne classes auxiliares com métodos estáticos puros para tarefas genéricas, como formatação de documentos, manipulação de datas e validações simples.","x":1440,"y":495,"width":600,"height":100,"color":"5"},
+		{"id":"4adafd4863aeaa00","type":"text","text":"Banco de Dados","x":-139,"y":-135,"width":167,"height":50},
+		{"id":"20a4e9ae3fcf1c82","type":"text","text":"Service","x":-133,"y":166,"width":105,"height":50,"color":"4"},
+		{"id":"c485e72d24550cf8","type":"text","text":"Estrutura da aplicação","x":-657,"y":105,"width":1193,"height":172},
+		{"id":"8436945fa9230404","type":"text","text":"Mapper","x":194,"y":166,"width":140,"height":50,"color":"6"},
+		{"id":"24aa61271ea08f7f","type":"text","text":"DTO e Form","x":374,"y":166,"width":140,"height":50,"color":"2"},
+		{"id":"b96795cabe1c3fd6","type":"text","text":"Repository","x":15,"y":166,"width":140,"height":50,"color":"3"},
+		{"id":"2ec99bf48062c17b","type":"text","text":"Entity / Model","x":-606,"y":166,"width":160,"height":50,"color":"1"},
+		{"id":"7c1fbeae4b932b14","type":"text","text":"Resource / Controller","x":-386,"y":166,"width":211,"height":50,"color":"5"},
+		{"id":"96601cf6bd9c1ff5","type":"text","text":"Backend","x":-139,"y":40,"width":167,"height":50},
+		{"id":"c45fb964c324bc53","type":"text","text":"Service","x":-150,"y":166,"width":140,"height":50,"color":"3"}
+	],
+	"edges":[
+		{"id":"66e470a43f7b3e8a","fromNode":"4adafd4863aeaa00","fromSide":"right","toNode":"96601cf6bd9c1ff5","toSide":"right"},
+		{"id":"80d1effd12668859","fromNode":"96601cf6bd9c1ff5","fromSide":"left","toNode":"4adafd4863aeaa00","toSide":"left"}
+	]
+}

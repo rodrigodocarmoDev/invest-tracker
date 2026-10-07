@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"header","type":"text","text":"# Aula 4: Banco de Dados SQL e NoSQL no Quarkus\nGerenciamento de dados relacionais e flexíveis integrados à aplicação Java.","x":0,"y":-400,"width":800,"height":100,"color":"1"},
+		{"id":"comparacao","type":"text","text":"**1. Paradigmas: SQL vs NoSQL**\n- **SQL:** Schema rígido, transações ACID rigorosas, escalabilidade vertical. Ex: PostgreSQL, MySQL.\n- **NoSQL:** Schema flexível, escalabilidade horizontal (clusters), eventual consistency (BASE). Ex: MongoDB, Redis.","x":-240,"y":-120,"width":400,"height":160,"color":"2"},
+		{"id":"sql","type":"text","text":"**3. Mundo Relacional (SQL)**\n- **DDL:** Define a estrutura (CREATE TABLE, PRIMARY e FOREIGN KEYs).\n- **DML:** Manipula dados (INSERT, UPDATE, DELETE).\n- Consultas avançadas usando **JOINs** (INNER, LEFT) para cruzar tabelas através de chaves.","x":-440,"y":160,"width":400,"height":160,"color":"4"},
+		{"id":"nosql","type":"text","text":"**4. Mundo NoSQL**\n- **MongoDB:** Orientado a Documentos (BSON/JSON flexível). Ideal para dados aninhados e evolução rápida sem amarras de schema.\n- **Redis:** Chave-Valor em memória (RAM). Usado para cache de altíssima performance e controle de sessão.","x":40,"y":160,"width":400,"height":160,"color":"5"},
+		{"id":"infra","type":"text","text":"**2. Infraestrutura e Conexões**\nBancos de dados rodam como processos daemon escutando em portas (ex: 5432 pro Postgres). \nHoje utilizamos **Docker** para subir instâncias e conectamos via **Connection String** (URL JDBC).","x":600,"y":0,"width":400,"height":160,"color":"3"},
+		{"id":"quarkus","type":"text","text":"**5. Integração com Quarkus (Java)**\n- **Dev Services:** Sobe containers do Banco automaticamente via Docker em tempo de desenvolvimento.\n- **Hibernate ORM Panache:** Abstração que traduz código Java (`Produto.persist()`) em comandos de banco, facilitando transações via anotações como `@Transactional`.","x":40,"y":440,"width":600,"height":160,"color":"6"}
+	],
+	"edges":[
+		{"id":"e1","fromNode":"header","fromSide":"bottom","toNode":"comparacao","toSide":"top"},
+		{"id":"e2","fromNode":"header","fromSide":"bottom","toNode":"infra","toSide":"top"},
+		{"id":"e3","fromNode":"comparacao","fromSide":"bottom","toNode":"sql","toSide":"top"},
+		{"id":"e4","fromNode":"comparacao","fromSide":"bottom","toNode":"nosql","toSide":"left"},
+		{"id":"e5","fromNode":"sql","fromSide":"bottom","toNode":"quarkus","toSide":"left"},
+		{"id":"e6","fromNode":"nosql","fromSide":"bottom","toNode":"quarkus","toSide":"top"},
+		{"id":"0ce9d089952fe411","fromNode":"infra","fromSide":"bottom","toNode":"quarkus","toSide":"right"}
+	]
+}
