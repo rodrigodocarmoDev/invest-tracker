@@ -11,5 +11,6 @@
     <orderEntry type="library" name="Maven: jakarta.ws.rs:jakarta.ws.rs-api:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: jakarta.transaction:jakarta.transaction-api:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.graalvm.sdk:nativeimage:23.1.2" level="project" />
+    <orderEntry type="library" name="Maven: jakarta.inject:jakarta.inject-api:2.0.1" level="project" />
   </component>
 </module>

@@ -50,7 +50,6 @@ public class DailyQuoteResource {
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating daily quotes").build();
         }
-
     }
 
     @PUT
@@ -62,7 +61,6 @@ public class DailyQuoteResource {
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating daily quotes").build();
         }
-
     }
 
     @DELETE
@@ -74,6 +72,5 @@ public class DailyQuoteResource {
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting daily quotes").build();
         }
-
     }
 }

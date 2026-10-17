@@ -1,10 +1,12 @@
 package resource;
 
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import model.Users;
 
+import java.util.List;
 import java.util.UUID;
 
 @Path("/users")
@@ -12,12 +14,19 @@ import java.util.UUID;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
 
+    @Inject
+    UserService userService;
+
     @GET
+    @Path("/")
     public Response findAll() {
         try {
-            return Response.ok().build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            List<UserDTO> user = userService.getAllUsers();
+            if (user.isEmpty()) {
+                return Response.noContent().build();
+            }
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving users").build();
         }
     }
 
@@ -25,28 +34,32 @@ public class UserResource {
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
         try {
-            return Response.ok().build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            UserDTO userDTO = userService.getById(id);
+            return Response.ok(userDTO).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving user").build();
         }
     }
 
     @POST
-    public Response create(Users user) {
+    @Path("/")
+    public Response create(UsersForm userForm) {
         try {
-            return Response.status(Response.Status.CREATED).entity(user).build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            UserDTO userDTO = userService.create(userForm);
+            return Response.status(Response.Status.CREATED).entity(UserDTO).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating user").build();
         }
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, Users user) {
+    public Response update(@PathParam("id") UUID id, UsersForm userForm) {
         try {
-            return Response.ok(user).build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+            UserDTO userDTO = userService.update(id, userForm);
+            return Response.ok(userForm).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating user").build();
         }
     }
 
@@ -54,9 +67,10 @@ public class UserResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
         try {
+            UserDTO userDTO = userService.delete(id);
             return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.serverError().entity(e.getMessage()).build();
+        } catch(Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting user").build();
         }
     }
 }
