@@ -1,11 +1,14 @@
 package resource;
 
+import dto.dailyquote.DailyQuoteDTO;
+import dto.dailyquote.DailyQuoteForm;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import model.DailyQuotes;
+import service.DailyQuoteService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Path("/daily-quotes")
@@ -20,7 +23,7 @@ public class DailyQuoteResource {
     @Path("/")
     public Response findAll() {
         try {
-            List<DailyQuotesDTO> quotes = dailyQuoteService.getAllQuotes();
+            List<DailyQuoteDTO> quotes = dailyQuoteService.getAllQuotes();
             if (quotes.isEmpty()) {
                 return Response.noContent().build();
             }
@@ -34,7 +37,7 @@ public class DailyQuoteResource {
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
         try {
-           DailyQuotesDTO dailyQuoteDTO = dailyQuoteService.getById(id);
+           DailyQuoteDTO dailyQuoteDTO = dailyQuoteService.getById(id);
            return Response.ok(dailyQuoteDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving daily quotes").build();
@@ -43,7 +46,7 @@ public class DailyQuoteResource {
 
     @POST
     @Path("/")
-    public Response create(DailyQuotesForm quoteForm) {
+    public Response create(DailyQuoteForm quoteForm) {
         try {
            DailyQuoteDTO dailyQuoteDTO = dailyQuoteService.create(quoteForm);
            return Response.status(Response.Status.CREATED).entity(dailyQuoteDTO).build();
@@ -54,10 +57,10 @@ public class DailyQuoteResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, DailyQuotesForm quoteForm) {
+    public Response update(@PathParam("id") UUID id, DailyQuoteForm quoteForm) {
         try {
             DailyQuoteDTO dailyQuoteDTO = dailyQuoteService.update(id, quoteForm);
-            return Response.ok(quoteForm).build();
+            return Response.ok(dailyQuoteDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating daily quotes").build();
         }

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "daily_quotes")
-public class DailyQuotes {
+public class DailyQuote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -15,7 +15,7 @@ public class DailyQuotes {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asset_id", nullable = false)
-    public Assets asset;
+    public Asset asset;
 
     @Column(name = "quote_date", nullable = false)
     public LocalDate quoteDate;

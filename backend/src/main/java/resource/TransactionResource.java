@@ -1,10 +1,12 @@
 package resource;
 
+import dto.transaction.TransactionDTO;
+import dto.transaction.TransactionForm;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import model.Transactions;
 import jakarta.inject.Inject;
+import service.TransactionService;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +27,7 @@ public class TransactionResource {
             if (transaction.isEmpty()) {
                 return Response.noContent().build();
             }
+            return Response.ok(transaction).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving assets").build();
         }
@@ -43,10 +46,10 @@ public class TransactionResource {
 
     @POST
     @Path("/")
-    public Response create(TransactionsForm transactionForm) {
+    public Response create(TransactionForm transactionForm) {
         try {
             TransactionDTO transactionDTO = transactionService.create(transactionForm);
-            return Response.ok().build();
+            return Response.ok(transactionDTO).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating transaction").build();
         }
@@ -54,10 +57,10 @@ public class TransactionResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, TransactionsForm transactionForm) {
+    public Response update(@PathParam("id") UUID id, TransactionForm transactionForm) {
         try {
             TransactionDTO transactionDTO = transactionService.update(id, transactionForm);
-            return Response.ok(transactionForm).build();
+            return Response.ok(transactionDTO).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating transaction").build();
         }
@@ -67,7 +70,7 @@ public class TransactionResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
         try {
-            TransactionDTO transactionDTO = transactionService.delete(id);
+            transactionService.delete(id);
             return Response.noContent().build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting transaction").build();

@@ -1,10 +1,12 @@
 package resource;
 
+import dto.user.UserDTO;
+import dto.user.UserForm;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import model.Users;
+import service.UserService;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +27,7 @@ public class UserResource {
             if (user.isEmpty()) {
                 return Response.noContent().build();
             }
+            return Response.ok(user).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving users").build();
         }
@@ -43,10 +46,10 @@ public class UserResource {
 
     @POST
     @Path("/")
-    public Response create(UsersForm userForm) {
+    public Response create(UserForm userForm) {
         try {
             UserDTO userDTO = userService.create(userForm);
-            return Response.status(Response.Status.CREATED).entity(UserDTO).build();
+            return Response.status(Response.Status.CREATED).entity(userDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating user").build();
         }
@@ -54,10 +57,10 @@ public class UserResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, UsersForm userForm) {
+    public Response update(@PathParam("id") UUID id, UserForm userForm) {
         try {
             UserDTO userDTO = userService.update(id, userForm);
-            return Response.ok(userForm).build();
+            return Response.ok(userDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating user").build();
         }
@@ -67,7 +70,7 @@ public class UserResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
         try {
-            UserDTO userDTO = userService.delete(id);
+            userService.delete(id);
             return Response.noContent().build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting user").build();

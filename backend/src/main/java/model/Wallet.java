@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "wallets")
-public class Wallets {
+public class Wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -15,7 +15,7 @@ public class Wallets {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id", nullable = false)
-    public Users users;
+    public User users;
 
     @Column(nullable = false)
     public String name;

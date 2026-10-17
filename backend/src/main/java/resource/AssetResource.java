@@ -1,10 +1,13 @@
 package resource;
 
+import dto.asset.AssetDTO;
+import dto.asset.AssetForm;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import model.Assets;
 import jakarta.inject.Inject;
+import service.AssetService;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -42,10 +45,10 @@ public class AssetResource {
 
     @POST
     @Path("/")
-    public Response create(AssetsForm assetForm) {
+    public Response create(AssetForm assetForm) {
         try {
             AssetDTO assetDTO = assetService.create(assetForm);
-            return Response.status(Response.Status.CREATED).entity(AssetDTO).build();
+            return Response.status(Response.Status.CREATED).entity(assetDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating assets").build();
         }
@@ -53,10 +56,10 @@ public class AssetResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, AssetsForm assetForm) {
+    public Response update(@PathParam("id") UUID id, AssetForm assetForm) {
         try {
             AssetDTO assetDTO = assetService.update(id, assetForm);
-            return Response.ok(assetForm).build();
+            return Response.ok(assetDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating assets").build();
         }
@@ -66,7 +69,7 @@ public class AssetResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
         try {
-            AssetDTO assetDTO = assetService.delete(id);
+            assetService.delete(id);
             return Response.noContent().build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting daily quotes").build();

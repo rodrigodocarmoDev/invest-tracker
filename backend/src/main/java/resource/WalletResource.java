@@ -1,10 +1,12 @@
 package resource;
 
+import dto.wallet.WalletDTO;
+import dto.wallet.WalletForm;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import model.Wallets;
+import service.WalletService;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,10 +23,11 @@ public class WalletResource {
     @Path("/")
     public Response findAll() {
         try {
-            List<WalletDTO> user = walletService.getAllWallets();
+            List<WalletDTO> wallet = walletService.getAllWallets();
             if (wallet.isEmpty()) {
                 return Response.noContent().build();
             }
+            return Response.ok(wallet).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving wallets").build();
         }
@@ -43,7 +46,7 @@ public class WalletResource {
 
     @POST
     @Path("/")
-    public Response create(WalletsForm walletForm) {
+    public Response create(WalletForm walletForm) {
         try {
             WalletDTO walletDTO = walletService.create(walletForm);
             return Response.status(Response.Status.CREATED).entity(walletDTO).build();
@@ -54,10 +57,10 @@ public class WalletResource {
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, WalletsForm walletForm) {
+    public Response update(@PathParam("id") UUID id, WalletForm walletForm) {
         try {
             WalletDTO walletDTO = walletService.update(id, walletForm);
-            return Response.ok(walletForm).build();
+            return Response.ok(walletDTO).build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating wallet").build();
         }
@@ -67,7 +70,7 @@ public class WalletResource {
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
         try {
-            WalletDTO walletDTO = walletService.delete(id);
+            walletService.delete(id);
             return Response.noContent().build();
         } catch(Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting wallet").build();
