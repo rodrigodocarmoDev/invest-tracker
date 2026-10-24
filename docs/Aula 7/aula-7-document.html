@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Aula 7 - Dominando o Ciclo do CRUD, CDI Beans e Tratamento de Exceções</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1e293b;
+    line-height: 1.55;
+    font-size: 13.5px;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4 {
+    color: #0f172a;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .header-card {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+    color: #ffffff;
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  }
+
+  .header-card h1 {
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    letter-spacing: -0.5px;
+  }
+
+  .header-card p {
+    color: #c7d2fe;
+    margin: 0 0 16px 0;
+    font-size: 14px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #ffffff;
+  }
+
+  .section-title {
+    font-size: 18px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-top: 26px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    page-break-after: avoid;
+  }
+
+  .section-number {
+    background: #4338ca;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .analogia-box {
+    background: #fdf4ff;
+    border-left: 4px solid #c026d3;
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+  }
+
+  .analogia-box strong {
+    color: #86198f;
+  }
+
+  .alert-box {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  .alert-box strong {
+    color: #1d4ed8;
+  }
+
+  .danger-box {
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  .danger-box strong {
+    color: #b91c1c;
+  }
+
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 12px;
+    overflow-x: auto;
+    margin: 10px 0 14px 0;
+    line-height: 1.45;
+    page-break-inside: avoid;
+  }
+
+  code {
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 12px;
+    background: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: #0f172a;
+  }
+
+  pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .kw { color: #f43f5e; font-weight: 600; }
+  .ann { color: #38bdf8; }
+  .type { color: #fbbf24; }
+  .str { color: #34d399; }
+  .com { color: #64748b; font-style: italic; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 12.5px;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #f1f5f9;
+    color: #334155;
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 600;
+    border-bottom: 2px solid #cbd5e1;
+  }
+
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .pipeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 14px 0;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .pipeline-step {
+    background: #ffffff;
+    border: 1px solid #94a3b8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #1e293b;
+    flex: 1;
+    margin: 0 4px;
+  }
+
+  .pipeline-step span {
+    display: block;
+    font-size: 10px;
+    color: #64748b;
+    font-weight: normal;
+  }
+
+  .arrow {
+    color: #4338ca;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 4px;">Material Didático do Professor • Aula 7</div>
+    <h1>Dominando o Ciclo do CRUD no Quarkus</h1>
+    <p>Desmistificando Beans, Inversão de Controle (IoC), Validação Declarativa com Records do Java 21, Persistência Saudável e Arquitetura Global de Exceções.</p>
+    <div class="badges">
+      <span class="badge">Java 21</span>
+      <span class="badge">Quarkus 3.39+</span>
+      <span class="badge">Hibernate Panache</span>
+      <span class="badge">Bean Validation</span>
+      <span class="badge">CDI (Arc)</span>
+      <span class="badge">REST Enterprise</span>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 1: O QUE É BEAN? -->
+  <div class="section-title">
+    <span class="section-number">1</span>
+    <span>Desmistificando o Conceito de "Bean" no Java</span>
+  </div>
+
+  <p>A palavra <strong>Bean</strong> assusta muitos estudantes por ser utilizada em contextos diferentes. Vamos entender de forma simples sua evolução histórica e seu significado no Quarkus:</p>
+
+  <div class="analogia-box">
+    <strong>☕ Por que "Bean"? (A Curiosidade Histórica)</strong><br>
+    Java é o nome de uma ilha indonésia famosa pelo cultivo de café (origem do símbolo da xícara). Em inglês, grão de café é <em>Coffee Bean</em>. Os criadores da linguagem batizaram os blocos fundamentais reutilizáveis de <strong>Beans (grãos de café)</strong>.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 28%;">Termo</th>
+        <th style="width: 36%;">O que é de fato?</th>
+        <th style="width: 36%;">Exemplo Prático</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>JavaBean Clássico</strong></td>
+        <td>Uma classe com atributos privados, getters/setters e construtor vazio. Apenas uma "sacola de dados".</td>
+        <td><code>public class User { private String email; public String getEmail(){...} }</code></td>
+      </tr>
+      <tr>
+        <td><strong>CDI Bean (Quarkus)</strong></td>
+        <td>Um objeto <strong>gerenciado pelo framework</strong>. Você não dá <code>new</code>; o Quarkus cria, guarda e injeta com <code>@Inject</code>.</td>
+        <td><code>@ApplicationScoped public class UserService { ... }</code></td>
+      </tr>
+      <tr>
+        <td><strong>Bean Validation</strong></td>
+        <td>Especificação do Java para carimbar regras de validação direto nos atributos do objeto via anotações.</td>
+        <td><code>@NotBlank @Email private String email;</code></td>
+      </tr>
+      <tr>
+        <td><strong>@Valid</strong></td>
+        <td>O "porteiro" do Controller que aciona o motor de validação antes de executar o método.</td>
+        <td><code>public Response create(@Valid UserForm form)</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SEÇÃO 2: INVERSÃO DE CONTROLE E PROXIES -->
+  <div class="section-title">
+    <span class="section-number">2</span>
+    <span>Inversão de Controle (IoC) e Proxies: Por que NUNCA dar "new"?</span>
+  </div>
+
+  <p>Quando colocamos <code>@ApplicationScoped</code> no <code>UserService</code> e injetamos com <code>@Inject</code>, o Quarkus assume a responsabilidade sobre aquele objeto. Mas o que isso muda na prática?</p>
+
+  <div class="analogia-box">
+    <strong>🚗 A Analogia do Uber vs. Comprar um Carro</strong><br>
+    <strong>Dar <code>new</code>:</strong> É comprar o carro, trocar o óleo, calibrar pneus e estacionar toda vez que precisa ir à padaria.<br>
+    <strong>O Quarkus no controle:</strong> É pedir um Uber. Você não precisa saber quem construiu o carro ou como ele funciona por dentro; você apenas solicita a corrida e a central entrega o serviço pronto.
+  </div>
+
+  <div class="danger-box">
+    <strong>⚠️ O Maior Perigo: O `@Transactional` morre se você der `new`!</strong><br>
+    O Java puro não entende a anotação <code>@Transactional</code>. Se você instanciar <code>new UserService()</code> manualmente, o método rodará como código comum: <strong>nenhuma transação será aberta no banco de dados</strong>, o commit não acontecerá e falhas não farão rollback.
+  </div>
+
+  <p><strong>Como o Quarkus resolve isso? Através de Client Proxies:</strong></p>
+  <p>O Quarkus nunca injeta a sua classe original pura. Ele cria uma <strong>"casca invisível" (Proxy)</strong> ao redor dela:</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">Requisição Externa<span>Chamada do Resource</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">Client Proxy (Quarkus)<span>Abre transação SQL (BEGIN)</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">Seu Service<span>Executa a regra de negócio</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">Client Proxy (Quarkus)<span>COMMIT ou ROLLBACK</span></div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SEÇÃO 3: BEAN VALIDATION COM RECORDS -->
+  <div class="section-title">
+    <span class="section-number">3</span>
+    <span>Validação Declarativa (Bean Validation) com Records do Java 21</span>
+  </div>
+
+  <p>Validações manuais com dezenas de <code>if (campo == null || campo.isBlank())</code> poluem a regra de negócio. O padrão moderno utiliza anotações declarativas em <strong>Records</strong> imutáveis do Java 21:</p>
+
+  <pre><code><span class="com">// dto/user/UserForm.java - Dados que CHEGAM do cliente</span>
+<span class="kw">package</span> dto.user;
+
+<span class="kw">import</span> jakarta.validation.constraints.*;
+
+<span class="kw">public record</span> <span class="type">UserForm</span>(
+    <span class="ann">@NotBlank</span>(message = <span class="str">"O e-mail é obrigatório"</span>)
+    <span class="ann">@Email</span>(message = <span class="str">"Formato de e-mail inválido"</span>)
+    <span class="type">String</span> email,
+
+    <span class="ann">@NotBlank</span>(message = <span class="str">"A senha é obrigatória"</span>)
+    <span class="ann">@Size</span>(min = 6, message = <span class="str">"A senha deve conter no mínimo 6 caracteres"</span>)
+    <span class="type">String</span> password
+) {}</code></pre>
+
+  <pre><code><span class="com">// dto/user/UserDTO.java - Dados que SAEM para o cliente (SENHA BLINDADA)</span>
+<span class="kw">package</span> dto.user;
+
+<span class="kw">import</span> java.time.LocalDateTime;
+<span class="kw">import</span> java.util.UUID;
+
+<span class="kw">public record</span> <span class="type">UserDTO</span>(
+    <span class="type">UUID</span> id,
+    <span class="type">String</span> email,
+    <span class="type">LocalDateTime</span> createdAt
+) {}</code></pre>
+
+  <div class="alert-box">
+    <strong>💡 Por que separar Form e DTO?</strong><br>
+    O <strong>Form</strong> recebe a senha aberta do usuário para ser validada e criptografada. O <strong>DTO</strong> é a bandeja de entrega segura: <strong>nunca devolva a entidade JPA inteira</strong>, pois o hash da senha ou dados internos vazariam no JSON de resposta.
+  </div>
+
+  <!-- SEÇÃO 4: PERSISTÊNCIA SAUDÁVEL NO PANACHE -->
+  <div class="section-title">
+    <span class="section-number">4</span>
+    <span>Persistência Saudável no Panache: "Só chamo persist e já era?"</span>
+  </div>
+
+  <p>Nos esqueletos iniciais, é comum encontrar chamadas como <code>repository.create(userForm)</code>. No Quarkus Panache:</p>
+  <ul>
+    <li>O método <code>create()</code> <strong>não existe</strong> no Panache (ele usa <code>persist()</code>).</li>
+    <li>O Repositório <strong>não deve conhecer</strong> DTOs ou Forms. Ele é responsável exclusivamente por Entidades do banco.</li>
+  </ul>
+
+  <p><strong>Por que NÃO devemos apenas chamar <code>repository.persist()</code> sem validações?</strong><br>
+  Se chamarmos <code>persist</code> diretamente e o e-mail já existir, o banco estourará uma <code>ConstraintViolationException</code> de SQL pura, devolvendo um horrível erro <strong>500 Internal Server Error</strong> para o cliente.</p>
+
+  <p><strong>O Ciclo dos 5 Passos de uma Persistência Saudável:</strong></p>
+  <div class="pipeline">
+    <div class="pipeline-step">1. Validar Conflito<span>Ex: E-mail já em uso?</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">2. Mapper<span>Converter Form em Entity</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">3. Enriquecer<span>Hash de senha, status</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">4. Persistir<span>repository.persist()</span></div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">5. Retornar DTO<span>mapper.toDTO()</span></div>
+  </div>
+
+  <pre><code><span class="com">// Implementação no UserService.java</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public</span> <span class="type">UserDTO</span> create(<span class="type">UserForm</span> form) {
+    <span class="com">// 1. Validação de Unicidade prévia</span>
+    userRepository.findByEmail(form.email()).ifPresent(u -> {
+        <span class="kw">throw new</span> <span class="type">ConflictException</span>(<span class="str">"E-mail já cadastrado: "</span> + form.email());
+    });
+
+    <span class="com">// 2. Mapeamento de Entrada</span>
+    <span class="type">User</span> user = userMapper.toEntity(form);
+
+    <span class="com">// 3. Enriquecimento de Dados</span>
+    user.passwordHash = SecurityUtils.hashPassword(form.password());
+
+    <span class="com">// 4. Persistência Transacional</span>
+    userRepository.persist(user);
+
+    <span class="com">// 5. Retorno Seguro via DTO</span>
+    <span class="kw">return</span> userMapper.toDTO(user);
+}</code></pre>
+
+  <div class="page-break"></div>
+
+  <!-- SEÇÃO 5: TRATAMENTO GLOBAL DE EXCEÇÕES -->
+  <div class="section-title">
+    <span class="section-number">5</span>
+    <span>Tratamento Global de Exceções: Eliminando o "try/catch" do Controller</span>
+  </div>
+
+  <p>Em vez de sujar todos os endpoints com blocos <code>try/catch</code> genéricos que mascaram falhas, a arquitetura moderna centraliza o tratamento em um <strong>Global Exception Handler</strong>.</p>
+
+  <p><strong>Organização do Módulo `exception/`:</strong></p>
+  <ul>
+    <li><code>exception/dto/</code>: Contém <code>ErrorResponseDTO</code> e <code>ValidationErrorDTO</code> (formato padronizado do JSON de erro).</li>
+    <li><code>exception/custom/</code>: Exceções com semântica de negócio (<code>ResourceNotFoundException</code>, <code>ConflictException</code>, <code>BusinessException</code>).</li>
+    <li><code>exception/handler/</code>: O interceptador <code>GlobalExceptionHandler</code> com anotações <code>@ServerExceptionMapper</code>.</li>
+  </ul>
+
+  <pre><code><span class="com">// exception/dto/ErrorResponseDTO.java - Resposta JSON Oficial de Erro</span>
+<span class="kw">package</span> exception.dto;
+
+<span class="kw">import</span> java.time.LocalDateTime;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public record</span> <span class="type">ErrorResponseDTO</span>(
+    <span class="type">int</span> status,
+    <span class="type">String</span> error,
+    <span class="type">String</span> message,
+    <span class="type">String</span> path,
+    <span class="type">LocalDateTime</span> timestamp,
+    <span class="type">List</span>&lt;<span class="type">ValidationErrorDTO</span>&gt; fieldErrors
+) {
+    <span class="kw">public</span> ErrorResponseDTO(<span class="type">int</span> status, <span class="type">String</span> error, <span class="type">String</span> message, <span class="type">String</span> path) {
+        <span class="kw">this</span>(status, error, message, path, LocalDateTime.now(), <span class="kw">null</span>);
+    }
+}</code></pre>
+
+  <pre><code><span class="com">// exception/handler/GlobalExceptionHandler.java - Interceptador Global</span>
+<span class="kw">package</span> exception.handler;
+
+<span class="kw">import</span> exception.custom.*;
+<span class="kw">import</span> exception.dto.*;
+<span class="kw">import</span> io.quarkus.resteasy.reactive.server.ServerExceptionMapper;
+<span class="kw">import</span> jakarta.validation.ConstraintViolationException;
+<span class="kw">import</span> jakarta.ws.rs.core.*;
+
+<span class="kw">public class</span> <span class="type">GlobalExceptionHandler</span> {
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleNotFound(<span class="type">ResourceNotFoundException</span> ex, <span class="ann">@Context</span> <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> err = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(<span class="num">404</span>, <span class="str">"Not Found"</span>, ex.getMessage(), uriInfo.getPath());
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.NOT_FOUND).entity(err).build();
+    }
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleConflict(<span class="type">ConflictException</span> ex, <span class="ann">@Context</span> <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> err = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(<span class="num">409</span>, <span class="str">"Conflict"</span>, ex.getMessage(), uriInfo.getPath());
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.CONFLICT).entity(err).build();
+    }
+}</code></pre>
+
+  <p><strong>O Resultado: Resource Limpo, Seguro e Semântico</strong></p>
+  <pre><code><span class="com">// resource/UserResource.java - ZERO blocos try/catch!</span>
+<span class="ann">@POST</span>
+<span class="kw">public</span> <span class="type">Response</span> create(<span class="ann">@Valid</span> <span class="type">UserForm</span> form) {
+    <span class="type">UserDTO</span> created = userService.create(form);
+    <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.CREATED).entity(created).build();
+}</code></pre>
+
+  <div class="card" style="margin-top: 18px; border-left: 4px solid #4338ca;">
+    <strong>🎯 Checklist Rápido de Sala de Aula:</strong>
+    <ol style="margin: 6px 0 0 16px; padding: 0;">
+      <li>Classes de Service e Mapper com <code>@ApplicationScoped</code>?</li>
+      <li>Repositories estendendo <code>PanacheRepositoryBase&lt;T, UUID&gt;</code>?</li>
+      <li>Métodos de escrita anotados com <code>@Transactional</code>?</li>
+      <li>Parâmetro de entrada do Resource com <code>@Valid</code>?</li>
+      <li>Exceções de negócio capturadas pelo <code>GlobalExceptionHandler</code>?</li>
+    </ol>
+  </div>
+
+</body>
+</html>
