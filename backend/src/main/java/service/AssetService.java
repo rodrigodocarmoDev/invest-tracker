@@ -2,7 +2,9 @@ package service;
 
 import dto.asset.AssetDTO;
 import dto.asset.AssetForm;
+import exception.custom.ConflictException;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import mapper.AssetMapper;
 import model.Asset;
 import repository.AssetRepository;
@@ -26,32 +28,43 @@ public class AssetService {
         return assetMapper.toDTO(asset);
     }
 
-    //@Transactional
+    @Transactional
     public AssetDTO create(AssetForm assetForm) {
-        //Asset asset = new Asset();
-        //asset.ticker = form.getTicker();
-        //asset.type = form.getType();
-        //asset.name = form.getName();
-
-        Asset asset = assetRepository.create(assetForm);
+        Asset asset = assetMapper.formToModel(assetForm);
+        assetRepository.persist(asset);
         return assetMapper.toDTO(asset);
     }
 
-    //@Transactional
+    @Transactional
     public AssetDTO update(UUID id, AssetForm assetForm) {
-        Asset asset = assetRepository.findById(id);
 
-        //asset.ticker = assetForm.getTicker();
-        //asset.type = assetForm.getType();
-        //asset.name = assetForm.getName();
+        Asset asset = assetRepository.findByIdOptional(id).orElseThrow();
 
+        if (assetForm.ticker() != null && !assetForm.ticker().isBlank()) {
+        asset.ticker = assetForm.ticker();
+        }
+
+        if (assetForm.type() != null && !assetForm.type().isBlank()) {
+            asset.type = assetForm.type();
+        }
+
+        if (assetForm.name() != null && !assetForm.name().isBlank()) {
+            asset.name = assetForm.name();
+        }
         return assetMapper.toDTO(asset);
     }
 
-    //@Transactional
+    @Transactional
     public void delete (UUID id) {
-        assetRepository.deleteById(id);
-    }
+        Asset asset = assetRepository.findByIdOptional(id).orElseThrow();
+        if (!transactionRepository.listByAssetId(id).isEmpty()) {
+            throw new ConflictException("Not possible to exclude asset with registered transactions.");
+        }
 
+        if (!dailyQuoteRepository.listByAssetId(id).isEmpty()) {
+            throw new ConflictException("Not possible to exclude asset with registered daily quotes.");
+        }
+        assetRepository.delete(asset);
+    }
 
 }
