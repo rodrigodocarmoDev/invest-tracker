@@ -8,6 +8,6 @@ import model.Asset;
 import java.util.UUID;
 
 @ApplicationScoped
-public class AssetRepository implements PanacheRepositoryBase<Asset, UUID> {
+public class AssetRepository implements  PanacheRepositoryBase<Asset, UUID> {
 
 }
