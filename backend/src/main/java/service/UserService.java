@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import mapper.UserMapper;
 import model.User;
 import repository.UserRepository;
+import util.SecurityUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,12 @@ public class UserService {
             throw new ConflictException("A user with email '" + userForm.email() + "' already exists.");
         });
 
-        User user = userMapper.formToModel(userForm);
+        User user = new User();
+        user.email = userForm.email().trim().toLowerCase();
+        user.passwordHash = SecurityUtils.hashPassword(userForm.password());
+        user.emailVerified = true;
+        user.role = "USER";
+
         userRepository.persist(user);
         return userMapper.toDTO(user);
     }
@@ -56,11 +62,11 @@ public class UserService {
                     throw new ConflictException("Email '" + userForm.email() + "' is already in use by another user.");
                 }
             });
-            user.email = userForm.email();
+            user.email = userForm.email().trim().toLowerCase();
         }
 
         if (userForm.password() != null && !userForm.password().isBlank()) {
-            user.passwordHash = userForm.password();
+            user.passwordHash = SecurityUtils.hashPassword(userForm.password());
         }
 
         return userMapper.toDTO(user);
