@@ -1,7 +1,7 @@
 package dto.asset;
 
-import jakarta.validation.constrants.NotBlank;
-import jakarta.validation.constrants.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record AssetForm(
         @NotBlank(message="Ticker is mandatory.")

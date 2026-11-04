@@ -23,13 +23,15 @@ public class AssetResource {
     @Path("/")
     public Response findAll() {
         try {
-            List<AssetDTO> asset = assetService.getAllAssets();
-            if (asset.isEmpty()) {
+            List<AssetDTO> assets = assetService.getAllAssets();
+            if (assets.isEmpty()) {
                 return Response.noContent().build();
             }
-        } catch(Exception e) {
+            return Response.ok(assets).build();
+        } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving assets").build();
         }
+
     }
 
     @GET

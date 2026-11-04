@@ -1,4 +1,10 @@
 package dto.user;
 
-public class UserDTO {
-}
+import java.util.UUID;
+
+public record UserDTO (
+        UUID id,
+        String ticker,
+        String type,
+        String name
+) {}
