@@ -2,10 +2,11 @@ package resource;
 
 import dto.asset.AssetDTO;
 import dto.asset.AssetForm;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import jakarta.inject.Inject;
 import service.AssetService;
 
 import java.util.List;
@@ -20,61 +21,38 @@ public class AssetResource {
     AssetService assetService;
 
     @GET
-    @Path("/")
     public Response findAll() {
-        try {
-            List<AssetDTO> assets = assetService.getAllAssets();
-            if (assets.isEmpty()) {
-                return Response.noContent().build();
-            }
-            return Response.ok(assets).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving assets").build();
+        List<AssetDTO> assets = assetService.getAllAssets();
+        if (assets.isEmpty()) {
+            return Response.noContent().build();
         }
-
+        return Response.ok(assets).build();
     }
 
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
-        try {
-            AssetDTO assetDTO = assetService.getById(id);
-            return Response.ok(assetDTO).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving daily quotes").build();
-        }
+        AssetDTO assetDTO = assetService.getById(id);
+        return Response.ok(assetDTO).build();
     }
 
     @POST
-    @Path("/")
-    public Response create(AssetForm assetForm) {
-        try {
-            AssetDTO assetDTO = assetService.create(assetForm);
-            return Response.status(Response.Status.CREATED).entity(assetDTO).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating assets").build();
-        }
+    public Response create(@Valid AssetForm assetForm) {
+        AssetDTO assetDTO = assetService.create(assetForm);
+        return Response.status(Response.Status.CREATED).entity(assetDTO).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, AssetForm assetForm) {
-        try {
-            AssetDTO assetDTO = assetService.update(id, assetForm);
-            return Response.ok(assetDTO).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating assets").build();
-        }
+    public Response update(@PathParam("id") UUID id, @Valid AssetForm assetForm) {
+        AssetDTO assetDTO = assetService.update(id, assetForm);
+        return Response.ok(assetDTO).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
-        try {
-            assetService.delete(id);
-            return Response.noContent().build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting daily quotes").build();
-        }
+        assetService.delete(id);
+        return Response.noContent().build();
     }
 }

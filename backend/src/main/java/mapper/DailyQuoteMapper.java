@@ -1,23 +1,24 @@
 package mapper;
 
 import dto.dailyquote.DailyQuoteDTO;
-import dto.dailyquote.DailyQuoteForm;
+import jakarta.enterprise.context.ApplicationScoped;
 import model.DailyQuote;
-import java.util.List;
 
+import java.util.List;
+import java.util.UUID;
+
+@ApplicationScoped
 public class DailyQuoteMapper {
 
-    private final ModelMapper modelMapper = new ModelMapper();
-
     public DailyQuoteDTO toDTO(DailyQuote dailyQuote) {
-        return modelMapper.map(dailyQuote, DailyQuoteDTO.class);
+        if (dailyQuote == null) return null;
+        UUID assetId = dailyQuote.asset != null ? dailyQuote.asset.id : null;
+        String ticker = dailyQuote.asset != null ? dailyQuote.asset.ticker : null;
+        return new DailyQuoteDTO(dailyQuote.id, assetId, ticker, dailyQuote.quoteDate, dailyQuote.closePrice);
     }
 
-    public List<DailyQuoteDTO> listToDTOs (List<DailyQuote> dailyQuotes) {
-        return dailyQuotes.stream().map((DailyQuote dailyQuote) -> toDTO(dailyQuote)).toList();
-    }
-
-    public DailyQuote formToModel(DailyQuoteForm dailyQuoteForm) {
-        return modelMapper.map(dailyQuoteForm, DailyQuote.class);
+    public List<DailyQuoteDTO> listToDTOs(List<DailyQuote> dailyQuotes) {
+        if (dailyQuotes == null) return List.of();
+        return dailyQuotes.stream().map(this::toDTO).toList();
     }
 }

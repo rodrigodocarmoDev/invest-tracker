@@ -1,26 +1,32 @@
 package mapper;
 
-import dto.wallet.WalletDTO;
-import dto.wallet.WalletForm;
 import dto.walletsnapshot.WalletSnapshotDTO;
-import dto.walletsnapshot.WalletSnapshotForm;
-import model.Wallet;
+import jakarta.enterprise.context.ApplicationScoped;
 import model.WalletSnapshot;
 
 import java.util.List;
+import java.util.UUID;
 
+@ApplicationScoped
 public class WalletSnapshotMapper {
-    private final ModelMapper modelMapper = new ModelMapper();
 
-    public WalletSnapshotDTO toDTO(WalletSnapshot walletSnapshot) {
-        return modelMapper.map(walletSnapshot, WalletSnapshotDTO.class);
+    public WalletSnapshotDTO toDTO(WalletSnapshot snapshot) {
+        if (snapshot == null) return null;
+        UUID walletId = snapshot.wallet != null ? snapshot.wallet.id : null;
+        String walletName = snapshot.wallet != null ? snapshot.wallet.name : null;
+
+        return new WalletSnapshotDTO(
+            snapshot.id,
+            walletId,
+            walletName,
+            snapshot.snapshotDate,
+            snapshot.totalValue,
+            snapshot.totalInvested
+        );
     }
 
-    public List<WalletSnapshotDTO> listToDTOs (List<WalletSnapshot> walletSnapshots) {
-        return walletSnapshots.stream().map((WalletSnapshot walletSnapshot) -> toDTO(walletSnapshot)).toList();
-    }
-
-    public WalletSnapshot formToModel(WalletSnapshotForm walletSnapshotForm) {
-        return modelMapper.map(walletSnapshotForm, WalletSnapshot.class);
+    public List<WalletSnapshotDTO> listToDTOs(List<WalletSnapshot> snapshots) {
+        if (snapshots == null) return List.of();
+        return snapshots.stream().map(this::toDTO).toList();
     }
 }

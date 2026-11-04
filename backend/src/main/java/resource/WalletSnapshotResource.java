@@ -3,6 +3,7 @@ package resource;
 import dto.walletsnapshot.WalletSnapshotDTO;
 import dto.walletsnapshot.WalletSnapshotForm;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -20,60 +21,38 @@ public class WalletSnapshotResource {
     WalletSnapshotService walletSnapshotService;
 
     @GET
-    @Path("/")
     public Response findAll() {
-        try {
-            List<WalletSnapshotDTO> walletSnapshot = walletSnapshotService.getAllwalletSnapshots();
-            if (walletSnapshot.isEmpty()) {
-                return Response.noContent().build();
-            }
-            return Response.ok(walletSnapshot).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving wallet snapshots").build();
+        List<WalletSnapshotDTO> snapshots = walletSnapshotService.getAllWalletSnapshots();
+        if (snapshots.isEmpty()) {
+            return Response.noContent().build();
         }
+        return Response.ok(snapshots).build();
     }
 
     @GET
     @Path("/{id}")
     public Response findById(@PathParam("id") UUID id) {
-        try {
-            WalletSnapshotDTO walletSnapshotDTO = walletSnapshotService.getById(id);
-            return Response.ok(walletSnapshotDTO).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error retrieving wallet snapshot").build();
-        }
+        WalletSnapshotDTO walletSnapshotDTO = walletSnapshotService.getById(id);
+        return Response.ok(walletSnapshotDTO).build();
     }
 
     @POST
-    @Path("/")
-    public Response create(WalletSnapshotForm walletSnapshotForm) {
-        try {
-            WalletSnapshotDTO walletSnapshotDTO = walletSnapshotService.create(walletSnapshotForm);
-            return Response.status(Response.Status.CREATED).entity(walletSnapshotDTO).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error creating wallet snapshot").build();
-        }
+    public Response create(@Valid WalletSnapshotForm walletSnapshotForm) {
+        WalletSnapshotDTO walletSnapshotDTO = walletSnapshotService.create(walletSnapshotForm);
+        return Response.status(Response.Status.CREATED).entity(walletSnapshotDTO).build();
     }
 
     @PUT
     @Path("/{id}")
-    public Response update(@PathParam("id") UUID id, WalletSnapshotForm walletSnapshotForm) {
-        try {
-            WalletSnapshotDTO walletSnapshotDTO = walletSnapshotService.update(id, walletSnapshotForm);
-            return Response.ok(walletSnapshotDTO).build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error updating wallet snapshot").build();
-        }
+    public Response update(@PathParam("id") UUID id, @Valid WalletSnapshotForm walletSnapshotForm) {
+        WalletSnapshotDTO walletSnapshotDTO = walletSnapshotService.update(id, walletSnapshotForm);
+        return Response.ok(walletSnapshotDTO).build();
     }
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") UUID id) {
-        try {
-            walletSnapshotService.delete(id);
-            return Response.noContent().build();
-        } catch(Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error deleting wallet snapshot").build();
-        }
+        walletSnapshotService.delete(id);
+        return Response.noContent().build();
     }
 }

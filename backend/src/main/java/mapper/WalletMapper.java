@@ -1,27 +1,23 @@
 package mapper;
 
-import dto.asset.AssetDTO;
-import dto.asset.AssetForm;
 import dto.wallet.WalletDTO;
-import dto.wallet.WalletForm;
-import model.Asset;
+import jakarta.enterprise.context.ApplicationScoped;
 import model.Wallet;
 
 import java.util.List;
+import java.util.UUID;
 
+@ApplicationScoped
 public class WalletMapper {
 
-    private final ModelMapper modelMapper = new ModelMapper();
-
     public WalletDTO toDTO(Wallet wallet) {
-        return modelMapper.map(wallet, WalletDTO.class);
+        if (wallet == null) return null;
+        UUID userId = wallet.users != null ? wallet.users.id : null;
+        return new WalletDTO(wallet.id, userId, wallet.name, wallet.createdAt);
     }
 
-    public List<WalletDTO> listToDTOs (List<Wallet> wallets) {
-        return wallets.stream().map((Wallet wallet) -> toDTO(wallet)).toList();
-    }
-
-    public Wallet formToModel(WalletForm walletForm) {
-        return modelMapper.map(walletForm, Wallet.class);
+    public List<WalletDTO> listToDTOs(List<Wallet> wallets) {
+        if (wallets == null) return List.of();
+        return wallets.stream().map(this::toDTO).toList();
     }
 }

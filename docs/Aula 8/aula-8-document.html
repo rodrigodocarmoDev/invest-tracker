@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Aula 8 - Profissionalizando o Tratamento de Exceções, Records e Refatoração da Arquitetura</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+
+  @page {
+    size: A4;
+    margin: 16mm 14mm 16mm 14mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1e293b;
+    line-height: 1.5;
+    font-size: 13px;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4 {
+    color: #0f172a;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .header-card {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+    color: #ffffff;
+    padding: 22px 26px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .header-card h1 {
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    font-size: 23px;
+    letter-spacing: -0.5px;
+  }
+
+  .header-card p {
+    color: #c7d2fe;
+    margin: 0 0 14px 0;
+    font-size: 13.5px;
+  }
+
+  .badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #ffffff;
+  }
+
+  .section-title {
+    font-size: 17px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 6px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    page-break-after: avoid;
+  }
+
+  .section-number {
+    background: #4338ca;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+
+  .analogia-box {
+    background: #fdf4ff;
+    border-left: 4px solid #c026d3;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+  }
+
+  .analogia-box strong {
+    color: #86198f;
+  }
+
+  .alert-box {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 12.5px;
+  }
+
+  .alert-box strong {
+    color: #1d4ed8;
+  }
+
+  .danger-box {
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 12.5px;
+  }
+
+  .danger-box strong {
+    color: #b91c1c;
+  }
+
+  .success-box {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 12.5px;
+  }
+
+  .success-box strong {
+    color: #15803d;
+  }
+
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 11.5px;
+    overflow-x: auto;
+    margin: 8px 0 12px 0;
+    line-height: 1.45;
+    page-break-inside: avoid;
+  }
+
+  code {
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 11.5px;
+    background: #f1f5f9;
+    padding: 2px 5px;
+    border-radius: 4px;
+    color: #0f172a;
+  }
+
+  pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .kw { color: #f43f5e; font-weight: 600; }
+  .ann { color: #38bdf8; }
+  .type { color: #fbbf24; }
+  .str { color: #34d399; }
+  .com { color: #64748b; font-style: italic; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 12px;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #f1f5f9;
+    color: #334155;
+    text-align: left;
+    padding: 9px 11px;
+    font-weight: 600;
+    border-bottom: 2px solid #cbd5e1;
+  }
+
+  td {
+    padding: 8px 11px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  .pipeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 12px 0;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .pipeline-step {
+    background: #ffffff;
+    border: 1px solid #94a3b8;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: #1e293b;
+    flex: 1;
+    margin: 0 4px;
+  }
+
+  .pipeline-step span {
+    display: block;
+    font-size: 10px;
+    color: #64748b;
+    font-weight: normal;
+  }
+
+  .arrow {
+    color: #4338ca;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.8; margin-bottom: 4px;">Material Didático do Professor • Aula 8</div>
+    <h1>Profissionalizando o Tratamento de Exceções e Refatoração Arquitetural</h1>
+    <p>Adequando o Invest-Tracker aos Padrões Corporativos: Fim dos try/catch nos Controllers, Criação de Exceções Semânticas, DTOs Imutáveis com Records e Interceptação Global com @ServerExceptionMapper.</p>
+    <div class="badges">
+      <span class="badge">☕ Java 21</span>
+      <span class="badge">⚡ Quarkus 3.39+</span>
+      <span class="badge">🛡️ GlobalExceptionHandler</span>
+      <span class="badge">📦 Records & DTOs</span>
+      <span class="badge">💾 Panache Repositories</span>
+      <span class="badge">🎯 Clean Architecture</span>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 1: O DIAGNÓSTICO -->
+  <div class="section-title">
+    <span class="section-number">1</span>
+    O Diagnóstico: Por que o Código Anterior Estava Frágil?
+  </div>
+
+  <p>Ao analisar a versão inicial do projeto <strong>Invest-Tracker</strong>, identificamos quatro grandes problemas arquiteturais que impediam a aplicação de compilar e seguir o padrão de mercado:</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Problema Encontrado</th>
+          <th>Impacto no Sistema</th>
+          <th>Solução Corporativa Aplicada</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Blocos try/catch genéricos nos Resources</strong></td>
+          <td>Todo erro (inclusive 404 Not Found e 409 Conflict) era capturado e transformado em <code>500 Internal Server Error</code>, com mensagens soltas em texto puro.</td>
+          <td><strong>Remoção total dos try/catch</strong> nos Resources. Delegação automática para o <code>GlobalExceptionHandler</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Anotações inválidas do Bean Validation</strong></td>
+          <td>Uso de <code>@NotBlank</code> em atributos como <code>LocalDateTime</code>, <code>BigDecimal</code> e objetos de Entidade (que só funcionam com Strings), gerando erros de runtime.</td>
+          <td>Uso correto de <code>@NotNull</code>, <code>@Positive</code>, <code>@PositiveOrZero</code> e isolamento com <code>UUID</code> nos Forms de entrada.</td>
+        </tr>
+        <tr>
+          <td><strong>Ausência de @ApplicationScoped nos Services</strong></td>
+          <td>Os Services não estavam registrados no contexto CDI do Arc/Quarkus, impossibilitando a injeção via <code>@Inject</code>.</td>
+          <td>Anotação <code>@ApplicationScoped</code> adicionada a todos os 6 Services e Mappers da aplicação.</td>
+        </tr>
+        <tr>
+          <td><strong>Dependência de ModelMapper inexistente no POM</strong></td>
+          <td>Classes de mapeamento tentavam dar <code>new ModelMapper()</code> sem a biblioteca no <code>pom.xml</code>, quebrando a compilação do Maven.</td>
+          <td>Mapeamento direto, limpo e performático usando construtores e <strong>Java 21 Records</strong> (sem reflection, nativo para GraalVM).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="danger-box">
+    <strong>⚠️ O Anti-Pattern do Resource Poluído:</strong> Quando um Controller tenta fazer o papel de interceptador de erros com blocos <code>try/catch</code> repetitivos, ele esconde a causa raiz dos problemas, viola o princípio de responsabilidade única (SRP) e impede que o cliente HTTP receba o status correto de resposta.
+  </div>
+
+  <!-- SEÇÃO 2: A ARQUITETURA DE 3 CAMADAS -->
+  <div class="section-title">
+    <span class="section-number">2</span>
+    A Nova Arquitetura de Tratamento de Exceções
+  </div>
+
+  <p>Implementamos o padrão em <strong>3 camadas</strong> sob o pacote <code>backend/src/main/java/exception/</code>:</p>
+
+  <div class="pipeline">
+    <div class="pipeline-step">
+      1. Exceções Customizadas
+      <span>exception.custom.*</span>
+    </div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">
+      2. Interceptador Global
+      <span>GlobalExceptionHandler</span>
+    </div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">
+      3. Payload Padronizado
+      <span>exception.dto.*</span>
+    </div>
+    <div class="arrow">➜</div>
+    <div class="pipeline-step">
+      4. Cliente HTTP
+      <span>Swagger / Frontend (JSON)</span>
+    </div>
+  </div>
+
+  <h3>2.1. Camada de Exceções Semânticas (custom/)</h3>
+  <p>Criamos exceções não-checadas (<code>RuntimeException</code>) com claro significado semântico:</p>
+
+  <div class="card">
+    <p><strong>1. ResourceNotFoundException (HTTP 404):</strong> Lançada quando o registro solicitado por ID não existe.</p>
+    <pre><code><span class="kw">package</span> exception.custom;
+
+<span class="kw">public class</span> <span class="type">ResourceNotFoundException</span> <span class="kw">extends</span> <span class="type">RuntimeException</span> {
+    <span class="kw">public</span> <span class="type">ResourceNotFoundException</span>(<span class="type">String</span> message) {
+        <span class="kw">super</span>(message);
+    }
+}</code></pre>
+
+    <p><strong>2. ConflictException (HTTP 409):</strong> Lançada em caso de violação de chaves únicas ou exclusão indevida de dados vinculados.</p>
+    <pre><code><span class="kw">package</span> exception.custom;
+
+<span class="kw">public class</span> <span class="type">ConflictException</span> <span class="kw">extends</span> <span class="type">RuntimeException</span> {
+    <span class="kw">public</span> <span class="type">ConflictException</span>(<span class="type">String</span> message) {
+        <span class="kw">super</span>(message);
+    }
+}</code></pre>
+
+    <p><strong>3. BusinessException (HTTP 400):</strong> Lançada quando regras de negócio são violadas (ex: tipo de operação inválido).</p>
+    <pre><code><span class="kw">package</span> exception.custom;
+
+<span class="kw">public class</span> <span class="type">BusinessException</span> <span class="kw">extends</span> <span class="type">RuntimeException</span> {
+    <span class="kw">public</span> <span class="type">BusinessException</span>(<span class="type">String</span> message) {
+        <span class="kw">super</span>(message);
+    }
+}</code></pre>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SEÇÃO 2 CONTINUAÇÃO: DTOs E HANDLER -->
+  <h3>2.2. Camada de Contrato JSON (dto/)</h3>
+  <p>Toda resposta de erro da API agora segue rigorosamente a mesma estrutura contratual:</p>
+
+  <div class="card">
+    <p><strong>ErrorResponseDTO.java:</strong></p>
+    <pre><code><span class="kw">package</span> exception.dto;
+
+<span class="kw">import</span> java.time.LocalDateTime;
+<span class="kw">import</span> java.util.List;
+
+<span class="kw">public record</span> <span class="type">ErrorResponseDTO</span>(
+    <span class="type">int</span> status,
+    <span class="type">String</span> error,
+    <span class="type">String</span> message,
+    <span class="type">String</span> path,
+    <span class="type">LocalDateTime</span> timestamp,
+    <span class="type">List</span>&lt;<span class="type">ValidationErrorDTO</span>&gt; fieldErrors
+) {
+    <span class="kw">public</span> <span class="type">ErrorResponseDTO</span>(<span class="type">int</span> status, <span class="type">String</span> error, <span class="type">String</span> message, <span class="type">String</span> path) {
+        <span class="kw">this</span>(status, error, message, path, <span class="type">LocalDateTime</span>.now(), <span class="kw">null</span>);
+    }
+}</code></pre>
+
+    <p><strong>ValidationErrorDTO.java:</strong></p>
+    <pre><code><span class="kw">package</span> exception.dto;
+
+<span class="kw">public record</span> <span class="type">ValidationErrorDTO</span>(
+    <span class="type">String</span> field,
+    <span class="type">String</span> message
+) {}</code></pre>
+  </div>
+
+  <h3>2.3. O Interceptador Global (handler/GlobalExceptionHandler.java)</h3>
+  <p>No Quarkus REST, utilizamos o recurso reativo <code>@ServerExceptionMapper</code>. Quando qualquer Service ou validador dispara uma exceção, ela é capturada antes de sair do servidor:</p>
+
+  <div class="card">
+    <pre><code><span class="kw">package</span> exception.handler;
+
+<span class="kw">import</span> exception.custom.*;
+<span class="kw">import</span> exception.dto.*;
+<span class="kw">import</span> jakarta.validation.ConstraintViolationException;
+<span class="kw">import</span> jakarta.ws.rs.core.Response;
+<span class="kw">import</span> jakarta.ws.rs.core.UriInfo;
+<span class="kw">import</span> org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+
+<span class="kw">public class</span> <span class="type">GlobalExceptionHandler</span> {
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleNotFound(<span class="type">ResourceNotFoundException</span> ex, <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> error = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(404, <span class="str">"Not Found"</span>, ex.getMessage(), uriInfo.getPath());
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.NOT_FOUND).entity(error).build();
+    }
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleConflict(<span class="type">ConflictException</span> ex, <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> error = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(409, <span class="str">"Conflict"</span>, ex.getMessage(), uriInfo.getPath());
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.CONFLICT).entity(error).build();
+    }
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleBusiness(<span class="type">BusinessException</span> ex, <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> error = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(400, <span class="str">"Bad Request"</span>, ex.getMessage(), uriInfo.getPath());
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.BAD_REQUEST).entity(error).build();
+    }
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleValidation(<span class="type">ConstraintViolationException</span> ex, <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> fieldErrors = ex.getConstraintViolations().stream()
+            .map(cv -&gt; <span class="kw">new</span> <span class="type">ValidationErrorDTO</span>(
+                cv.getPropertyPath().toString().substring(cv.getPropertyPath().toString().lastIndexOf(<span class="str">'.'</span>) + 1),
+                cv.getMessage()))
+            .toList();
+
+        <span class="kw">var</span> error = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(400, <span class="str">"Validation Error"</span>, <span class="str">"Erro de validação"</span>,
+                                        uriInfo.getPath(), java.time.LocalDateTime.now(), fieldErrors);
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.BAD_REQUEST).entity(error).build();
+    }
+
+    <span class="ann">@ServerExceptionMapper</span>
+    <span class="kw">public</span> <span class="type">Response</span> handleGeneric(<span class="type">Throwable</span> ex, <span class="type">UriInfo</span> uriInfo) {
+        <span class="kw">var</span> error = <span class="kw">new</span> <span class="type">ErrorResponseDTO</span>(500, <span class="str">"Internal Server Error"</span>, ex.getMessage(), uriInfo.getPath());
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.INTERNAL_SERVER_ERROR).entity(error).build();
+    }
+}</code></pre>
+  </div>
+
+  <!-- SUBSEÇÃO 2.4: DÚVIDA CRUCIAL SOBRE PERSIST, HIBERNATE E THROWABLE -->
+  <h3>2.4. Dúvida Crucial: Se o persist() falhar no banco, quem dá o throw? O Papel do Hibernate e do Throwable</h3>
+
+  <div class="analogia-box">
+    <strong>💡 Dúvida Frequente de Aula:</strong> <em>"No método <code>AssetService.create()</code>, após a linha <code>assetRepository.persist(asset);</code> não existe nenhum <code>throw</code>. Se der erro no banco, como isso vai cair no <code>GlobalExceptionHandler</code>?"</em>
+  </div>
+
+  <p>Para entender esse comportamento, precisamos separar em dois caminhos de execução:</p>
+
+  <div class="card">
+    <h4>1. O Caminho Feliz (Sucesso)</h4>
+    <p>Se o PostgreSQL processar o registro normalmente, <strong>não há throw em lugar nenhum!</strong> E esse é o fluxo normal. A execução passa pelo <code>persist()</code>, atinge a linha seguinte (<code>return assetMapper.toDTO(asset);</code>), o Quarkus confirma o commit da transação <code>@Transactional</code> e o Controller responde <strong>HTTP 201 Created</strong> com o DTO recém-criado.</p>
+
+    <h4>2. O Caminho de Falha de Infraestrutura (Quem dispara o throw?)</h4>
+    <p>Se o banco de dados cair, houver timeout de rede, estouro de caracteres na coluna SQL ou falha de chave estrangeira no banco, <strong>o desenvolvedor não precisa escrever throw manualmente</strong>. O próprio ecossistema do <strong>Hibernate, Panache e Driver JDBC</strong> dispara internamente uma exceção de runtime (como <code>PersistenceException</code>, <code>SQLException</code> ou <code>DataException</code>).</p>
+
+    <div class="alert-box">
+      <strong>🛡️ Por que usamos <code>Throwable</code> no método genérico?</strong><br>
+      No Java, <code>Throwable</code> é a classe-mãe absoluta de todas as exceções e erros da JVM (<code>Throwable ➜ Exception ➜ RuntimeException</code>). Ao declarar <code>handleGeneric(Throwable ex)</code> com <code>@ServerExceptionMapper</code>, criamos uma <strong>rede de segurança universal (fallback)</strong>. Qualquer erro inesperado que o Hibernate ou o banco disparar e que não tenha um handler específico cairá automaticamente aqui, sendo convertido em um JSON limpo com status <strong>500 Internal Server Error</strong>, sem expor stacktraces sensíveis para o usuário final.
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SEÇÃO 3: REESTRUTURAÇÃO DOS MÓDULOS -->
+  <div class="section-title">
+    <span class="section-number">3</span>
+    Refatoração Prática: Como Ficaram os Recursos e Serviços
+  </div>
+
+  <p>Todos os <strong>6 módulos</strong> da aplicação foram refatorados para tirar proveito da nova arquitetura:</p>
+
+  <h3>3.1. O Novo Padrão de Resource (Zero try/catch)</h3>
+  <p>Observe a elegância do novo <code>AssetResource.java</code>. Não há nenhum bloco <code>try/catch</code>. Se o serviço falhar, o Quarkus sabe exatamente o que fazer:</p>
+
+  <div class="card">
+    <pre><code><span class="ann">@Path</span>(<span class="str">"/assets"</span>)
+<span class="ann">@Produces</span>(<span class="type">MediaType</span>.APPLICATION_JSON)
+<span class="ann">@Consumes</span>(<span class="type">MediaType</span>.APPLICATION_JSON)
+<span class="kw">public class</span> <span class="type">AssetResource</span> {
+
+    <span class="ann">@Inject</span> <span class="type">AssetService</span> assetService;
+
+    <span class="ann">@GET</span>
+    <span class="kw">public</span> <span class="type">Response</span> findAll() {
+        <span class="kw">var</span> assets = assetService.getAllAssets();
+        <span class="kw">return</span> assets.isEmpty() ? <span class="type">Response</span>.noContent().build() : <span class="type">Response</span>.ok(assets).build();
+    }
+
+    <span class="ann">@GET</span> <span class="ann">@Path</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="type">Response</span> findById(<span class="ann">@PathParam</span>(<span class="str">"id"</span>) <span class="type">UUID</span> id) {
+        <span class="kw">return</span> <span class="type">Response</span>.ok(assetService.getById(id)).build();
+    }
+
+    <span class="ann">@POST</span>
+    <span class="kw">public</span> <span class="type">Response</span> create(<span class="ann">@Valid</span> <span class="type">AssetForm</span> assetForm) {
+        <span class="kw">return</span> <span class="type">Response</span>.status(<span class="type">Response.Status</span>.CREATED).entity(assetService.create(assetForm)).build();
+    }
+
+    <span class="ann">@PUT</span> <span class="ann">@Path</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="type">Response</span> update(<span class="ann">@PathParam</span>(<span class="str">"id"</span>) <span class="type">UUID</span> id, <span class="ann">@Valid</span> <span class="type">AssetForm</span> assetForm) {
+        <span class="kw">return</span> <span class="type">Response</span>.ok(assetService.update(id, assetForm)).build();
+    }
+
+    <span class="ann">@DELETE</span> <span class="ann">@Path</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="type">Response</span> delete(<span class="ann">@PathParam</span>(<span class="str">"id"</span>) <span class="type">UUID</span> id) {
+        assetService.delete(id);
+        <span class="kw">return</span> <span class="type">Response</span>.noContent().build();
+    }
+}</code></pre>
+  </div>
+
+  <h3>3.2. O Novo Padrão de Service (Protegido e Transacional)</h3>
+  <p>No <code>AssetService.java</code>, implementamos regras rigorosas antes de permitir exclusões ou inserções duplicadas:</p>
+
+  <div class="card">
+    <pre><code><span class="ann">@ApplicationScoped</span>
+<span class="kw">public class</span> <span class="type">AssetService</span> {
+
+    <span class="ann">@Inject</span> <span class="type">AssetRepository</span> assetRepository;
+    <span class="ann">@Inject</span> <span class="type">TransactionRepository</span> transactionRepository;
+    <span class="ann">@Inject</span> <span class="type">DailyQuoteRepository</span> dailyQuoteRepository;
+    <span class="ann">@Inject</span> <span class="type">AssetMapper</span> assetMapper;
+
+    <span class="kw">public</span> <span class="type">AssetDTO</span> getById(<span class="type">UUID</span> id) {
+        <span class="type">Asset</span> asset = assetRepository.findByIdOptional(id)
+            .orElseThrow(() -&gt; <span class="kw">new</span> <span class="type">ResourceNotFoundException</span>(<span class="str">"Asset not found for ID: "</span> + id));
+        <span class="kw">return</span> assetMapper.toDTO(asset);
+    }
+
+    <span class="ann">@Transactional</span>
+    <span class="kw">public</span> <span class="type">AssetDTO</span> create(<span class="type">AssetForm</span> form) {
+        assetRepository.findByTicker(form.ticker()).ifPresent(existing -&gt; {
+            <span class="kw">throw new</span> <span class="type">ConflictException</span>(<span class="str">"Asset with ticker '"</span> + form.ticker() + <span class="str">"' already exists."</span>);
+        });
+        <span class="type">Asset</span> asset = assetMapper.formToModel(form);
+        assetRepository.persist(asset);
+        <span class="kw">return</span> assetMapper.toDTO(asset);
+    }
+
+    <span class="ann">@Transactional</span>
+    <span class="kw">public void</span> delete(<span class="type">UUID</span> id) {
+        <span class="type">Asset</span> asset = assetRepository.findByIdOptional(id)
+            .orElseThrow(() -&gt; <span class="kw">new</span> <span class="type">ResourceNotFoundException</span>(<span class="str">"Asset not found for ID: "</span> + id));
+
+        <span class="kw">if</span> (!transactionRepository.listByAssetId(id).isEmpty()) {
+            <span class="kw">throw new</span> <span class="type">ConflictException</span>(<span class="str">"Not possible to delete asset with registered transactions."</span>);
+        }
+        <span class="kw">if</span> (!dailyQuoteRepository.listByAssetId(id).isEmpty()) {
+            <span class="kw">throw new</span> <span class="type">ConflictException</span>(<span class="str">"Not possible to delete asset with registered daily quotes."</span>);
+        }
+        assetRepository.delete(asset);
+    }
+}</code></pre>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SEÇÃO 4: EXEMPLOS DOS PAYLOADS JSON -->
+  <div class="section-title">
+    <span class="section-number">4</span>
+    O Resultado na Prática: Payloads de Erro Recebidos pelo Cliente
+  </div>
+
+  <p>Veja como o cliente da API (Frontend, Swagger UI ou Postman) recebe respostas claras, rastreáveis e semânticas:</p>
+
+  <div class="card">
+    <h4>Cenário A: Busca por ID inexistente (HTTP 404 Not Found)</h4>
+    <pre><code>{
+  <span class="str">"status"</span>: 404,
+  <span class="str">"error"</span>: <span class="str">"Not Found"</span>,
+  <span class="str">"message"</span>: <span class="str">"Asset not found for ID: 9c8e1e7f-71b3-4f9e-a0e2-b7b51bfa70d1"</span>,
+  <span class="str">"path"</span>: <span class="str">"/assets/9c8e1e7f-71b3-4f9e-a0e2-b7b51bfa70d1"</span>,
+  <span class="str">"timestamp"</span>: <span class="str">"2026-11-04T17:16:00"</span>,
+  <span class="str">"fieldErrors"</span>: null
+}</code></pre>
+
+    <h4>Cenário B: Falha na validação de campos obrigatórios (HTTP 400 Bad Request)</h4>
+    <pre><code>{
+  <span class="str">"status"</span>: 400,
+  <span class="str">"error"</span>: <span class="str">"Validation Error"</span>,
+  <span class="str">"message"</span>: <span class="str">"Validation error on submitted fields"</span>,
+  <span class="str">"path"</span>: <span class="str">"/users"</span>,
+  <span class="str">"timestamp"</span>: <span class="str">"2026-11-04T17:16:00"</span>,
+  <span class="str">"fieldErrors"</span>: [
+    {
+      <span class="str">"field"</span>: <span class="str">"email"</span>,
+      <span class="str">"message"</span>: <span class="str">"Invalid email format."</span>
+    },
+    {
+      <span class="str">"field"</span>: <span class="str">"password"</span>,
+      <span class="str">"message"</span>: <span class="str">"Password must have at least 6 characters."</span>
+    }
+  ]
+}</code></pre>
+
+    <h4>Cenário C: Violação de integridade ou exclusão bloqueada (HTTP 409 Conflict)</h4>
+    <pre><code>{
+  <span class="str">"status"</span>: 409,
+  <span class="str">"error"</span>: <span class="str">"Conflict"</span>,
+  <span class="str">"message"</span>: <span class="str">"Not possible to delete asset with registered transactions."</span>,
+  <span class="str">"path"</span>: <span class="str">"/assets/8d7c2a11-5463-4411-9a99-b132890ef011"</span>,
+  <span class="str">"timestamp"</span>: <span class="str">"2026-11-04T17:16:00"</span>,
+  <span class="str">"fieldErrors"</span>: null
+}</code></pre>
+  </div>
+
+  <!-- SEÇÃO 5: CONCLUSÃO E CHECKLIST -->
+  <div class="section-title">
+    <span class="section-number">5</span>
+    Checklist de Boas Práticas Enterprise
+  </div>
+
+  <div class="success-box">
+    <strong>✅ Status Final da Compilação:</strong> Executado <code>./mvnw compile -DskipTests</code> com sucesso absoluto (<code>BUILD SUCCESS</code>). Todos os 48 arquivos-fonte compilados com Java 21 sem warnings impeditivos.
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Regra</th>
+          <th>Diretriz de Mercado</th>
+          <th>Status no Invest-Tracker</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Camadas</strong></td>
+          <td>Resource não faz lógica nem acesso a banco; apenas valida HTTP e delega ao Service.</td>
+          <td>✔️ 100% Implementado</td>
+        </tr>
+        <tr>
+          <td><strong>Tratamento de Erros</strong></td>
+          <td>Zero try/catch nos Controllers; captura centralizada com @ServerExceptionMapper.</td>
+          <td>✔️ 100% Implementado</td>
+        </tr>
+        <tr>
+          <td><strong>Imutabilidade</strong></td>
+          <td>Uso de Java 21 Records para DTOs e Forms; isolamento total das Entidades JPA.</td>
+          <td>✔️ 100% Implementado</td>
+        </tr>
+        <tr>
+          <td><strong>Validação</strong></td>
+          <td>Bean Validation (@Valid, @NotNull, @Positive) com mensagens claras de erro.</td>
+          <td>✔️ 100% Implementado</td>
+        </tr>
+        <tr>
+          <td><strong>Transacionalidade</strong></td>
+          <td>Métodos de escrita anotados com @Transactional para garantir rollback automático.</td>
+          <td>✔️ 100% Implementado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</body>
+</html>

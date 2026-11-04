@@ -1,13 +1,13 @@
 package dto.wallet;
 
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
+import java.util.UUID;
 
-public record WalletForm (
-        @NotBlank(message="User is mandatory.")
-        String user,
-        @NotBlank(message="Name is mandatory.")
-        String name,
-        @NotBlank(message="")
-        LocalDateTime createAt
+public record WalletForm(
+    @NotNull(message = "User ID is mandatory.")
+    UUID userId,
+
+    @NotBlank(message = "Wallet name is mandatory.")
+    String name
 ) {}

@@ -2,24 +2,30 @@ package mapper;
 
 import dto.asset.AssetDTO;
 import dto.asset.AssetForm;
+import jakarta.enterprise.context.ApplicationScoped;
 import model.Asset;
 
 import java.util.List;
 
+@ApplicationScoped
 public class AssetMapper {
 
-    private final ModelMapper modelMapper = new ModelMapper();
-
     public AssetDTO toDTO(Asset asset) {
-        return modelMapper.map(asset, AssetDTO.class);
+        if (asset == null) return null;
+        return new AssetDTO(asset.id, asset.ticker, asset.type, asset.name);
     }
 
-    public List<AssetDTO> listToDTOs (List<Asset> assets) {
-        return assets.stream().map((Asset asset) -> toDTO(asset)).toList();
+    public List<AssetDTO> listToDTOs(List<Asset> assets) {
+        if (assets == null) return List.of();
+        return assets.stream().map(this::toDTO).toList();
     }
 
     public Asset formToModel(AssetForm assetForm) {
-        return modelMapper.map(assetForm, Asset.class);
+        if (assetForm == null) return null;
+        Asset asset = new Asset();
+        asset.ticker = assetForm.ticker();
+        asset.type = assetForm.type();
+        asset.name = assetForm.name();
+        return asset;
     }
-
 }
