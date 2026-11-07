@@ -14,6 +14,7 @@ import repository.TransactionRepository;
 import repository.UserRepository;
 import repository.WalletRepository;
 import repository.WalletSnapshotRepository;
+import security.CurrentUser;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,21 +37,29 @@ public class WalletService {
     @Inject
     WalletMapper walletMapper;
 
+    @Inject
+    CurrentUser currentUser;
+
+    /** ADMIN vê todas as carteiras; usuário comum vê apenas as suas. */
     public List<WalletDTO> getAllWallets() {
-        List<Wallet> wallets = walletRepository.listAll();
+        List<Wallet> wallets = currentUser.isAdmin()
+                ? walletRepository.listAll()
+                : walletRepository.listByUserId(currentUser.id());
         return walletMapper.listToDTOs(wallets);
     }
 
     public WalletDTO getById(UUID id) {
-        Wallet wallet = walletRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for ID: " + id));
-        return walletMapper.toDTO(wallet);
+        return walletMapper.toDTO(findAccessibleWallet(id));
     }
 
     @Transactional
     public WalletDTO create(WalletForm walletForm) {
-        User user = userRepository.findByIdOptional(walletForm.userId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found for ID: " + walletForm.userId()));
+        // O dono padrão é quem está logado. Informar outro userId só é permitido para ADMIN.
+        UUID ownerId = walletForm.userId() != null ? walletForm.userId() : currentUser.id();
+        currentUser.checkAccess(ownerId);
+
+        User user = userRepository.findByIdOptional(ownerId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for ID: " + ownerId));
 
         Wallet wallet = new Wallet();
         wallet.name = walletForm.name();
@@ -62,14 +71,14 @@ public class WalletService {
 
     @Transactional
     public WalletDTO update(UUID id, WalletForm walletForm) {
-        Wallet wallet = walletRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for ID: " + id));
+        Wallet wallet = findAccessibleWallet(id);
 
         if (walletForm.name() != null && !walletForm.name().isBlank()) {
             wallet.name = walletForm.name();
         }
 
-        if (walletForm.userId() != null) {
+        if (walletForm.userId() != null && !walletForm.userId().equals(wallet.users.id)) {
+            currentUser.requireAdmin("Only administrators can transfer a wallet to another user.");
             User user = userRepository.findByIdOptional(walletForm.userId())
                     .orElseThrow(() -> new ResourceNotFoundException("User not found for ID: " + walletForm.userId()));
             wallet.users = user;
@@ -80,8 +89,7 @@ public class WalletService {
 
     @Transactional
     public void delete(UUID id) {
-        Wallet wallet = walletRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for ID: " + id));
+        Wallet wallet = findAccessibleWallet(id);
 
         if (!transactionRepository.listByWalletId(id).isEmpty()) {
             throw new ConflictException("Not possible to delete wallet with registered transactions.");
@@ -92,5 +100,17 @@ public class WalletService {
         }
 
         walletRepository.delete(wallet);
+    }
+
+    /**
+     * Busca a carteira e garante que o usuário logado é o dono (ou ADMIN).
+     * Público porque Transaction e WalletSnapshot também dependem do dono da carteira:
+     * a regra de acesso fica escrita em UM lugar só.
+     */
+    public Wallet findAccessibleWallet(UUID id) {
+        Wallet wallet = walletRepository.findByIdOptional(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for ID: " + id));
+        currentUser.checkAccess(wallet.users.id);
+        return wallet;
     }
 }

@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import mapper.UserMapper;
 import model.User;
 import repository.UserRepository;
+import security.Roles;
 import util.SecurityUtils;
 
 import java.time.LocalDateTime;
@@ -44,15 +45,11 @@ public class AuthService {
         user.email = form.email().trim().toLowerCase();
         user.name = form.name() != null ? form.name().trim() : null;
         user.passwordHash = SecurityUtils.hashPassword(form.password());
-        user.emailVerified = false;
-        user.verificationToken = UUID.randomUUID().toString();
-        user.verificationTokenExpiresAt = LocalDateTime.now().plusHours(24);
-        user.role = "USER";
+        // A role é sempre definida pelo servidor. Nunca aceite "role" vinda do formulário de cadastro.
+        user.role = Roles.USER;
 
         userRepository.persist(user);
-
-        // Dispara o e-mail de verificação
-        emailService.sendVerificationEmail(user.email, user.name, user.verificationToken);
+        startEmailVerification(user);
 
         return userMapper.toDTO(user);
     }
@@ -77,30 +74,27 @@ public class AuthService {
         return new MessageResponseDTO("Email successfully verified! You can now log in.");
     }
 
+    /**
+     * A resposta é sempre a mesma, exista ou não o e-mail.
+     * Se respondêssemos "usuário não encontrado", qualquer pessoa poderia descobrir
+     * quais e-mails têm conta no sistema (ataque de enumeração de usuários).
+     */
     @Transactional
     public MessageResponseDTO resendVerificationEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new BusinessException("Email is required.");
         }
 
-        User user = userRepository.findByEmail(email.trim().toLowerCase())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email));
+        userRepository.findByEmail(email)
+                .filter(user -> !user.emailVerified)
+                .ifPresent(this::startEmailVerification);
 
-        if (user.emailVerified) {
-            throw new ConflictException("This email is already verified.");
-        }
-
-        user.verificationToken = UUID.randomUUID().toString();
-        user.verificationTokenExpiresAt = LocalDateTime.now().plusHours(24);
-
-        emailService.sendVerificationEmail(user.email, user.name, user.verificationToken);
-
-        return new MessageResponseDTO("Verification email successfully resent to: " + user.email);
+        return new MessageResponseDTO("If this email is registered and not yet verified, a new verification link has been sent.");
     }
 
     public AuthResponseDTO login(LoginForm form) {
-        String email = form.email().trim().toLowerCase();
-        User user = userRepository.findByEmail(email)
+        // Mesma mensagem para "e-mail não existe" e "senha errada": não revela qual dos dois falhou.
+        User user = userRepository.findByEmail(form.email())
                 .orElseThrow(() -> new BusinessException("Invalid email or password."));
 
         if (!SecurityUtils.checkPassword(form.password(), user.passwordHash)) {
@@ -115,5 +109,17 @@ public class AuthService {
         long expiresIn = tokenService.getExpirationTimeInSeconds();
 
         return new AuthResponseDTO(token, expiresIn, userMapper.toDTO(user));
+    }
+
+    /**
+     * Marca o e-mail como não verificado, gera um novo token de verificação (válido por 24h) e envia o e-mail.
+     * Usado no cadastro, no reenvio e quando o usuário troca de e-mail.
+     */
+    public void startEmailVerification(User user) {
+        user.emailVerified = false;
+        user.verificationToken = UUID.randomUUID().toString();
+        user.verificationTokenExpiresAt = LocalDateTime.now().plusHours(24);
+
+        emailService.sendVerificationEmail(user.email, user.name, user.verificationToken);
     }
 }

@@ -13,7 +13,7 @@ import model.Transaction;
 import model.Wallet;
 import repository.AssetRepository;
 import repository.TransactionRepository;
-import repository.WalletRepository;
+import security.CurrentUser;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,7 +26,7 @@ public class TransactionService {
     TransactionRepository transactionRepository;
 
     @Inject
-    WalletRepository walletRepository;
+    WalletService walletService;
 
     @Inject
     AssetRepository assetRepository;
@@ -34,21 +34,25 @@ public class TransactionService {
     @Inject
     TransactionMapper transactionMapper;
 
+    @Inject
+    CurrentUser currentUser;
+
+    /** ADMIN vê todas; usuário comum vê apenas as transações das suas carteiras. */
     public List<TransactionDTO> getAllTransactions() {
-        List<Transaction> transactions = transactionRepository.listAll();
+        List<Transaction> transactions = currentUser.isAdmin()
+                ? transactionRepository.listAll()
+                : transactionRepository.listByUserId(currentUser.id());
         return transactionMapper.listToDTOs(transactions);
     }
 
     public TransactionDTO getById(UUID id) {
-        Transaction transaction = transactionRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found for ID: " + id));
-        return transactionMapper.toDTO(transaction);
+        return transactionMapper.toDTO(findAccessibleTransaction(id));
     }
 
     @Transactional
     public TransactionDTO create(TransactionForm form) {
-        Wallet wallet = walletRepository.findByIdOptional(form.walletId())
-                .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for ID: " + form.walletId()));
+        // Só pode lançar transação em carteira própria (ou qualquer uma, se ADMIN).
+        Wallet wallet = walletService.findAccessibleWallet(form.walletId());
 
         Asset asset = assetRepository.findByIdOptional(form.assetId())
                 .orElseThrow(() -> new ResourceNotFoundException("Asset not found for ID: " + form.assetId()));
@@ -72,13 +76,11 @@ public class TransactionService {
 
     @Transactional
     public TransactionDTO update(UUID id, TransactionForm form) {
-        Transaction transaction = transactionRepository.findByIdOptional(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found for ID: " + id));
+        Transaction transaction = findAccessibleTransaction(id);
 
         if (form.walletId() != null) {
-            Wallet wallet = walletRepository.findByIdOptional(form.walletId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Wallet not found for ID: " + form.walletId()));
-            transaction.wallet = wallet;
+            // Mover a transação também exige ser dono da carteira de DESTINO.
+            transaction.wallet = walletService.findAccessibleWallet(form.walletId());
         }
 
         if (form.assetId() != null) {
@@ -112,8 +114,15 @@ public class TransactionService {
 
     @Transactional
     public void delete(UUID id) {
+        Transaction transaction = findAccessibleTransaction(id);
+        transactionRepository.delete(transaction);
+    }
+
+    /** Uma transação pertence a quem é dono da carteira dela. */
+    private Transaction findAccessibleTransaction(UUID id) {
         Transaction transaction = transactionRepository.findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Transaction not found for ID: " + id));
-        transactionRepository.delete(transaction);
+        currentUser.checkAccess(transaction.wallet.users.id);
+        return transaction;
     }
 }

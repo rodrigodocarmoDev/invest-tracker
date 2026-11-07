@@ -2,6 +2,7 @@ package resource;
 
 import dto.transaction.TransactionDTO;
 import dto.transaction.TransactionForm;
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Path("/transactions")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class TransactionResource {
 
     @Inject

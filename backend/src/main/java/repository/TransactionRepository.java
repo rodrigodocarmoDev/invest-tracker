@@ -17,4 +17,9 @@ public class TransactionRepository implements PanacheRepositoryBase<Transaction,
     public List<Transaction> listByWalletId(UUID walletId) {
         return list("wallet.id", walletId);
     }
+
+    /** Todas as transações das carteiras que pertencem ao usuário. */
+    public List<Transaction> listByUserId(UUID userId) {
+        return list("wallet.users.id", userId);
+    }
 }

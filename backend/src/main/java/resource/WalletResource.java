@@ -2,6 +2,7 @@ package resource;
 
 import dto.wallet.WalletDTO;
 import dto.wallet.WalletForm;
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Path("/wallets")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class WalletResource {
 
     @Inject

@@ -6,19 +6,23 @@ import dto.auth.MessageResponseDTO;
 import dto.auth.RegisterForm;
 import dto.user.UserDTO;
 import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import mapper.UserMapper;
-import model.User;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import repository.UserRepository;
+import security.CurrentUser;
 import service.AuthService;
+import service.UserService;
 
-import java.util.UUID;
-
+/**
+ * Endpoints públicos de autenticação.
+ *
+ * Como a aplicação nega por padrão qualquer endpoint sem anotação de segurança
+ * (quarkus.security.jaxrs.deny-unannotated-endpoints=true), as rotas abertas
+ * precisam ser liberadas EXPLICITAMENTE com @PermitAll.
+ */
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -28,16 +32,14 @@ public class AuthResource {
     AuthService authService;
 
     @Inject
-    UserRepository userRepository;
+    UserService userService;
 
     @Inject
-    UserMapper userMapper;
-
-    @Inject
-    JsonWebToken jwt;
+    CurrentUser currentUser;
 
     @POST
     @Path("/register")
+    @PermitAll
     public Response register(@Valid RegisterForm form) {
         UserDTO userDTO = authService.register(form);
         return Response.status(Response.Status.CREATED).entity(userDTO).build();
@@ -45,6 +47,7 @@ public class AuthResource {
 
     @POST
     @Path("/login")
+    @PermitAll
     public Response login(@Valid LoginForm form) {
         AuthResponseDTO authDTO = authService.login(form);
         return Response.ok(authDTO).build();
@@ -52,6 +55,7 @@ public class AuthResource {
 
     @GET
     @Path("/verify-email")
+    @PermitAll
     public Response verifyEmail(@QueryParam("token") String token) {
         MessageResponseDTO response = authService.verifyEmail(token);
         return Response.ok(response).build();
@@ -59,6 +63,7 @@ public class AuthResource {
 
     @POST
     @Path("/resend-verification")
+    @PermitAll
     public Response resendVerification(@QueryParam("email") String email) {
         MessageResponseDTO response = authService.resendVerificationEmail(email);
         return Response.ok(response).build();
@@ -68,17 +73,6 @@ public class AuthResource {
     @Path("/me")
     @Authenticated
     public Response me() {
-        String userIdStr = jwt.getSubject();
-        if (userIdStr == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        UUID userId = UUID.fromString(userIdStr);
-        User user = userRepository.findById(userId);
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        return Response.ok(userMapper.toDTO(user)).build();
+        return Response.ok(userService.getById(currentUser.id())).build();
     }
 }

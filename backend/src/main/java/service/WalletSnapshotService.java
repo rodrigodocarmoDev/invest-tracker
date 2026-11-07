@@ -12,10 +12,16 @@ import model.Wallet;
 import model.WalletSnapshot;
 import repository.WalletRepository;
 import repository.WalletSnapshotRepository;
+import security.CurrentUser;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Snapshots são dados CALCULADOS pelo sistema (futuro scheduler diário), não digitados pelo usuário.
+ * Por isso: o dono da carteira pode LER os seus snapshots, mas criar/alterar/excluir é exclusivo
+ * de ADMIN (garantido por @RolesAllowed no WalletSnapshotResource).
+ */
 @ApplicationScoped
 public class WalletSnapshotService {
 
@@ -28,14 +34,21 @@ public class WalletSnapshotService {
     @Inject
     WalletSnapshotMapper walletSnapshotMapper;
 
+    @Inject
+    CurrentUser currentUser;
+
+    /** ADMIN vê todos; usuário comum vê apenas os snapshots das suas carteiras. */
     public List<WalletSnapshotDTO> getAllWalletSnapshots() {
-        List<WalletSnapshot> walletSnapshots = walletSnapshotRepository.listAll();
+        List<WalletSnapshot> walletSnapshots = currentUser.isAdmin()
+                ? walletSnapshotRepository.listAll()
+                : walletSnapshotRepository.listByUserId(currentUser.id());
         return walletSnapshotMapper.listToDTOs(walletSnapshots);
     }
 
     public WalletSnapshotDTO getById(UUID id) {
         WalletSnapshot walletSnapshot = walletSnapshotRepository.findByIdOptional(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Wallet snapshot not found for ID: " + id));
+        currentUser.checkAccess(walletSnapshot.wallet.users.id);
         return walletSnapshotMapper.toDTO(walletSnapshot);
     }
 

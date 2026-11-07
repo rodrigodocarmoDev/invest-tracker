@@ -16,6 +16,11 @@ public class WalletSnapshotRepository implements PanacheRepositoryBase<WalletSna
         return list("wallet.id", walletId);
     }
 
+    /** Todos os snapshots das carteiras que pertencem ao usuário. */
+    public List<WalletSnapshot> listByUserId(UUID userId) {
+        return list("wallet.users.id", userId);
+    }
+
     public Optional<WalletSnapshot> findByWalletAndDate(UUID walletId, LocalDate snapshotDate) {
         return find("wallet.id = ?1 and snapshotDate = ?2", walletId, snapshotDate).firstResultOptional();
     }
