@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Minha Carteira</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Minha Carteira</h1>
+
+  <div></div>
+
+  <form id="form">
+    <input id="nome" placeholder="Ativo (ex: PETR4)" required>
+    <input id="valor" type="number" step="0.01" placeholder="Valor (R$)" required>
+    <button type="submit">Adicionar</button>
+  </form>
+
+  <ul id="lista"></ul>
+
+  <p>Total: <strong id="total">R$ 0,00</strong></p>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

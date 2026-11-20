@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minha Carteira</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topo">
+    <img src="assets/logo.svg" alt="Logo da Minha Carteira" class="logo">
+    <h1>Minha Carteira</h1>
+  </header>
+
+  <main class="conteudo">
+    <section class="resumo">
+      <div class="card">
+        <span class="card-titulo">Total investido</span>
+        <strong id="total">R$ 0,00</strong>
+      </div>
+      <div class="card">
+        <span class="card-titulo">Ativos</span>
+        <strong id="quantidade">0</strong>
+      </div>
+      <div class="card">
+        <span class="card-titulo">Maior posição</span>
+        <strong id="maior">-</strong>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Novo ativo</h2>
+      <form id="form" class="form-linha">
+        <input id="nome" placeholder="Ativo (ex: PETR4)" required>
+        <select id="tipo">
+          <option value="acao">Ação</option>
+          <option value="fii">FII</option>
+          <option value="renda-fixa">Renda Fixa</option>
+          <option value="cripto">Cripto</option>
+        </select>
+        <input id="valor" type="number" step="0.01" min="0" placeholder="Valor (R$)" required>
+        <button type="submit">Adicionar</button>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Meus ativos</h2>
+      <ul id="lista" class="lista"></ul>
+      <p id="vazio" class="vazio">Nenhum ativo ainda. Adicione o primeiro acima!</p>
+    </section>
+  </main>
+
+  <footer class="rodape">Feito na aula de front-end</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

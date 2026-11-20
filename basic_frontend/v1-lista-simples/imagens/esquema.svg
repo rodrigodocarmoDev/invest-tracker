@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" font-family="Arial, sans-serif" font-size="13">
+  <rect width="520" height="400" fill="#ffffff"/>
+  <!-- body -->
+  <rect x="10" y="10" width="500" height="380" fill="#f4f4f4" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="18" y="28" fill="#999">&lt;body&gt;</text>
+
+  <rect x="110" y="40" width="300" height="34" fill="#d7efe0" stroke="#2c7a4b"/>
+  <text x="120" y="62" fill="#2c7a4b" font-weight="bold">&lt;h1&gt; Minha Carteira</text>
+
+  <rect x="110" y="86" width="300" height="130" fill="#fff" stroke="#3b82f6" stroke-dasharray="4 3"/>
+  <text x="118" y="102" fill="#3b82f6">&lt;form id="form"&gt;</text>
+  <rect x="122" y="110" width="276" height="28" fill="#fff" stroke="#666"/>
+  <text x="130" y="129" fill="#666">&lt;input id="nome"&gt;</text>
+  <rect x="122" y="144" width="276" height="28" fill="#fff" stroke="#666"/>
+  <text x="130" y="163" fill="#666">&lt;input id="valor" type="number"&gt;</text>
+  <rect x="122" y="178" width="276" height="28" fill="#2c7a4b"/>
+  <text x="200" y="197" fill="#fff">&lt;button&gt; Adicionar</text>
+
+  <rect x="110" y="228" width="300" height="110" fill="#fff" stroke="#f59e0b" stroke-dasharray="4 3"/>
+  <text x="118" y="244" fill="#f59e0b">&lt;ul id="lista"&gt;  (preenchida pelo JS)</text>
+  <rect x="122" y="252" width="276" height="24" fill="#fafafa" stroke="#ccc"/>
+  <text x="130" y="269">&lt;li&gt; PETR4 - R$ 1500.00</text>
+  <rect x="368" y="255" width="24" height="18" fill="#2c7a4b"/><text x="375" y="268" fill="#fff">X</text>
+  <rect x="122" y="282" width="276" height="24" fill="#fafafa" stroke="#ccc"/>
+  <text x="130" y="299">&lt;li&gt; MXRF11 - R$ 800.00</text>
+  <rect x="368" y="285" width="24" height="18" fill="#2c7a4b"/><text x="375" y="298" fill="#fff">X</text>
+  <text x="130" y="326" fill="#999">... um &lt;li&gt; por ativo</text>
+
+  <rect x="110" y="348" width="300" height="28" fill="#fff" stroke="#8b5cf6" stroke-dasharray="4 3"/>
+  <text x="118" y="367" fill="#8b5cf6">&lt;p&gt; Total: &lt;strong id="total"&gt;</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 470" font-family="Arial, sans-serif" font-size="13">
+  <rect width="640" height="470" fill="#ffffff"/>
+
+  <!-- header: flex -->
+  <rect x="10" y="10" width="620" height="50" fill="#2c7a4b"/>
+  <text x="20" y="28" fill="#cfe9d9" font-size="11">&lt;header class="topo"&gt;  display: flex  →  itens lado a lado</text>
+  <rect x="20" y="34" width="22" height="20" fill="#fff"/><text x="48" y="49" fill="#fff">&lt;img&gt;  +  &lt;h1&gt;</text>
+
+  <!-- main -->
+  <rect x="10" y="70" width="620" height="350" fill="#f0f2f5" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="18" y="86" fill="#999">&lt;main class="conteudo"&gt;</text>
+
+  <!-- resumo: grid -->
+  <rect x="30" y="94" width="580" height="86" fill="none" stroke="#e11d48" stroke-dasharray="4 3"/>
+  <text x="38" y="110" fill="#e11d48">&lt;section class="resumo"&gt;  display: grid  →  3 colunas iguais (1fr 1fr 1fr)</text>
+  <rect x="40" y="118" width="180" height="52" fill="#fff" stroke="#ccc"/><text x="50" y="140">.card</text><text x="50" y="158" fill="#2c7a4b" font-weight="bold">Total</text>
+  <rect x="230" y="118" width="180" height="52" fill="#fff" stroke="#ccc"/><text x="240" y="140">.card</text><text x="240" y="158" fill="#2c7a4b" font-weight="bold">Ativos</text>
+  <rect x="420" y="118" width="180" height="52" fill="#fff" stroke="#ccc"/><text x="430" y="140">.card</text><text x="430" y="158" fill="#2c7a4b" font-weight="bold">Maior</text>
+  <text x="212" y="190" fill="#e11d48" font-size="11">↑ gap: 16px (espaço entre as colunas)</text>
+
+  <!-- form: flex -->
+  <rect x="30" y="198" width="580" height="70" fill="#fff" stroke="#3b82f6" stroke-dasharray="4 3"/>
+  <text x="38" y="214" fill="#3b82f6">&lt;form class="form-linha"&gt;  display: flex  →  campos em linha, flex: 1 divide o espaço</text>
+  <rect x="40" y="226" width="140" height="30" fill="#fff" stroke="#666"/><text x="48" y="246">&lt;input&gt;</text>
+  <rect x="188" y="226" width="140" height="30" fill="#fff" stroke="#666"/><text x="196" y="246">&lt;select&gt;</text>
+  <rect x="336" y="226" width="140" height="30" fill="#fff" stroke="#666"/><text x="344" y="246">&lt;input&gt;</text>
+  <rect x="484" y="226" width="116" height="30" fill="#2c7a4b"/><text x="496" y="246" fill="#fff">&lt;button&gt;</text>
+
+  <!-- lista -->
+  <rect x="30" y="278" width="580" height="132" fill="#fff" stroke="#f59e0b" stroke-dasharray="4 3"/>
+  <text x="38" y="294" fill="#f59e0b">&lt;ul class="lista"&gt;  cada &lt;li class="item"&gt; também é flex</text>
+  <rect x="40" y="304" width="560" height="30" fill="#fafafa" stroke="#ccc"/>
+  <rect x="48" y="311" width="56" height="16" rx="8" fill="#3b82f6"/><text x="56" y="323" fill="#fff" font-size="11">.tag</text>
+  <text x="114" y="324" font-weight="bold">.item-nome  (flex: 1 → ocupa o que sobra)</text>
+  <text x="470" y="324">valor</text>
+  <rect x="566" y="310" width="26" height="18" fill="#d9534f"/><text x="574" y="323" fill="#fff">X</text>
+  <rect x="40" y="340" width="560" height="30" fill="#fafafa" stroke="#ccc"/>
+  <rect x="48" y="347" width="56" height="16" rx="8" fill="#f59e0b"/><text x="56" y="359" fill="#fff" font-size="11">.tag</text>
+  <text x="114" y="360" font-weight="bold">MXRF11</text><text x="470" y="360">valor</text>
+  <rect x="566" y="346" width="26" height="18" fill="#d9534f"/><text x="574" y="359" fill="#fff">X</text>
+  <text x="48" y="396" fill="#999">&lt;p class="vazio"&gt; aparece só quando a lista está vazia</text>
+
+  <!-- footer -->
+  <rect x="10" y="428" width="620" height="32" fill="#fff" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="250" y="449" fill="#999">&lt;footer class="rodape"&gt;</text>
+</svg>

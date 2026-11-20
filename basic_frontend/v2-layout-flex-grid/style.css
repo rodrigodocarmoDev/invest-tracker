@@ -1,0 +1,171 @@
+/* ---------- Base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f0f2f5;
+  color: #222;
+}
+
+/* ---------- Topo (Flexbox) ---------- */
+.topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #2c7a4b;
+  color: white;
+}
+
+.logo {
+  width: 40px;
+}
+
+.topo h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+/* ---------- Conteúdo ---------- */
+.conteudo {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+/* ---------- Cards de resumo (Grid) ---------- */
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-titulo {
+  font-size: 14px;
+  color: #666;
+}
+
+.card strong {
+  font-size: 22px;
+  color: #2c7a4b;
+}
+
+/* ---------- Painéis ---------- */
+.painel {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.painel h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+/* ---------- Formulário em linha (Flexbox) ---------- */
+.form-linha {
+  display: flex;
+  gap: 8px;
+}
+
+.form-linha input,
+.form-linha select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.form-linha input:focus,
+.form-linha select:focus {
+  outline: 2px solid #2c7a4b;
+}
+
+button {
+  padding: 10px 16px;
+  background: #2c7a4b;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1f5a37;
+}
+
+/* ---------- Lista ---------- */
+.lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.item-nome {
+  flex: 1;
+  font-weight: bold;
+}
+
+.btn-remover {
+  background: #d9534f;
+  padding: 4px 10px;
+}
+
+.btn-remover:hover {
+  background: #b52b27;
+}
+
+/* ---------- Etiquetas por tipo ---------- */
+.tag {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+}
+
+.tag-acao       { background: #3b82f6; }
+.tag-fii        { background: #f59e0b; }
+.tag-renda-fixa { background: #10b981; }
+.tag-cripto     { background: #8b5cf6; }
+
+/* ---------- Mensagem de lista vazia ---------- */
+.vazio {
+  color: #999;
+  text-align: center;
+}
+
+.escondido {
+  display: none;
+}
+
+/* ---------- Rodapé ---------- */
+.rodape {
+  text-align: center;
+  padding: 16px;
+  color: #999;
+  font-size: 14px;
+}

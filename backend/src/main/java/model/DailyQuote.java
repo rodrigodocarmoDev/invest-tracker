@@ -6,7 +6,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "daily_quotes")
+// Uma cotação por ativo por dia, garantido também pelo BANCO (protege contra duas sincronizações simultâneas)
+@Table(name = "daily_quotes", uniqueConstraints = @UniqueConstraint(columnNames = {"asset_id", "quote_date"}))
 public class DailyQuote {
 
     @Id

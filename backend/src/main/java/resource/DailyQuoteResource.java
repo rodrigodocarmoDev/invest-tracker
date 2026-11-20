@@ -10,7 +10,9 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import security.Roles;
+import dto.dailyquote.QuoteSyncResultDTO;
 import service.DailyQuoteService;
+import service.QuoteSyncService;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,9 @@ public class DailyQuoteResource {
 
     @Inject
     DailyQuoteService dailyQuoteService;
+
+    @Inject
+    QuoteSyncService quoteSyncService;
 
     @GET
     public Response findAll() {
@@ -45,6 +50,18 @@ public class DailyQuoteResource {
     public Response create(@Valid DailyQuoteForm quoteForm) {
         DailyQuoteDTO dailyQuoteDTO = dailyQuoteService.create(quoteForm);
         return Response.status(Response.Status.CREATED).entity(dailyQuoteDTO).build();
+    }
+
+    /**
+     * Busca agora na brapi a cotação de todos os ativos cadastrados.
+     * É a mesma rotina que o QuoteSyncJob executa automaticamente todo dia útil.
+     */
+    @RolesAllowed(Roles.ADMIN)
+    @POST
+    @Path("/sync")
+    public Response sync() {
+        QuoteSyncResultDTO result = quoteSyncService.syncAll();
+        return Response.ok(result).build();
     }
 
     @RolesAllowed(Roles.ADMIN)

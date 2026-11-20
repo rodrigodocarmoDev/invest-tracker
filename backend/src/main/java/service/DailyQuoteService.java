@@ -13,6 +13,8 @@ import model.DailyQuote;
 import repository.AssetRepository;
 import repository.DailyQuoteRepository;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -77,6 +79,29 @@ public class DailyQuoteService {
         }
 
         return dailyQuoteMapper.toDTO(dailyQuote);
+    }
+
+    /**
+     * Usado pela sincronização automática (QuoteSyncService): grava a cotação do dia
+     * ou, se ela já existir, apenas atualiza o preço.
+     *
+     * Isso torna a sincronização IDEMPOTENTE: rodar 1 ou 10 vezes no mesmo dia
+     * produz o mesmo resultado (uma cotação por ativo por dia), sem erro de duplicidade.
+     */
+    @Transactional
+    public void saveOrUpdate(UUID assetId, LocalDate quoteDate, BigDecimal closePrice) {
+        Asset asset = assetRepository.findByIdOptional(assetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Asset not found for ID: " + assetId));
+
+        dailyQuoteRepository.findByAssetAndDate(assetId, quoteDate).ifPresentOrElse(
+                existing -> existing.closePrice = closePrice,
+                () -> {
+                    DailyQuote quote = new DailyQuote();
+                    quote.asset = asset;
+                    quote.quoteDate = quoteDate;
+                    quote.closePrice = closePrice;
+                    dailyQuoteRepository.persist(quote);
+                });
     }
 
     @Transactional
